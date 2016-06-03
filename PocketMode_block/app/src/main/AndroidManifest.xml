@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.wdjhzw.pocketmode"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".LockedScreenActivity"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/LockedScreen">
+        </activity>
+
+        <service android:name=".MainService"></service>
+
+        <!--android:permission="android.permission.BIND_DEVICE_ADMIN"
+        is a permission that a DeviceAdminReceiver subclass must have,
+        to ensure that only the system can interact with the receiver
+        (no application can be granted this permission).
+        This prevents other applications from abusing your device admin app.-->
+
+        <!--android.app.action.DEVICE_ADMIN_ENABLED
+        is the primary action that a DeviceAdminReceiver subclass must handle
+        to be allowed to manage a device.
+        This is set to the receiver when the user enables the device admin app.
+        Your code typically handles this in onEnabled().
+        To be supported, the receiver must also require the BIND_DEVICE_ADMIN permission
+        so that other applications cannot abuse it. -->
+    </application>
+
+</manifest>

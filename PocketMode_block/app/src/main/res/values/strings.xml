@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PocketMode</string>
+    <string name="start_service">Start Service</string>
+    <string name="admin_receiver">admin_receiver</string>
+</resources>
