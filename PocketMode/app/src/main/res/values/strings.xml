@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">PocketMode</string>
+
+    <!-- Strings related to Settings -->
+    <string name="permissions">Permissions</string>
+    <string name="can_draw_overlays">Draw over other apps</string>
+
+    <string name="start_service">Start service</string>
+
+    <string name="auto_start">Auto-start</string>
+    <string name="about">About</string>
+    <string name="general">General</string>
+
+    <string name="can_draw_overlays_summary">In Android 6.0, you need to make this permission enabled to block status bar.</string>
+
+    <string name="toast_service_start">Service start</string>
+    <string name="toast_service_stop">Service stop</string>
+    <string name="toast_occur_error">Operation failed</string>
+</resources>

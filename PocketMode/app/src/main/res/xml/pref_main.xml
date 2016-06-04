@@ -1,0 +1,34 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/permissions">
+        <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+        <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="can_draw_overlays"
+            android:summary="@string/can_draw_overlays_summary"
+            android:title="@string/can_draw_overlays" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/general"
+        android:dependency="can_draw_overlays">
+        <!-- A 'parent' preference, which enables/disables child preferences (below)
+        when checked/unchecked. -->
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="start_service"
+            android:title="@string/start_service"/>
+
+        <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="auto_start"
+            android:title="@string/auto_start" />
+    </PreferenceCategory>
+
+    <Preference android:title="@string/about">
+        <intent android:action="com.wdjhzw.pocketmode.about"></intent>
+    </Preference>
+
+</PreferenceScreen>
