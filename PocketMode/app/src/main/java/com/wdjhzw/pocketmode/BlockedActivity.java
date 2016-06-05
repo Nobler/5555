@@ -3,6 +3,7 @@ package com.wdjhzw.pocketmode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,8 +37,15 @@ public class BlockedActivity extends Activity {
             mInstance = this;
         }
 
+//        registerReceiver(new BootReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                String reason = intent.getStringExtra("reason");
+//                Log.e(TAG, "reason:" + reason);
+//            }
+//        }, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+
         mWM = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        disableStatusBar();
 
         mDecorView = getWindow().getDecorView();
         mDecorView.setOnSystemUiVisibilityChangeListener(new View
@@ -71,6 +79,7 @@ public class BlockedActivity extends Activity {
     protected void onStart() {
         super.onStart();
         Log.e(TAG, "onStart");
+        disableStatusBar();
     }
 
     @Override
@@ -83,6 +92,18 @@ public class BlockedActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.e(TAG, "onResume");
+        Log.e(TAG, getStatusBarHeight() + ":" + getNavigationBarHeight() + ":" + getResources()
+                .getDisplayMetrics().scaledDensity);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(TAG, "onStop");
+
+        if (mBlockView != null) {
+            mWM.removeView(mBlockView);
+        }
     }
 
     @Override
@@ -105,7 +126,7 @@ public class BlockedActivity extends Activity {
     private void disableStatusBar() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-        params.gravity = Gravity.TOP;
+        params.gravity = Gravity.BOTTOM;
         params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 // this is to enable the notification to receive touch events
 //                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
@@ -113,11 +134,33 @@ public class BlockedActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = (int) (40 * getResources().getDisplayMetrics().scaledDensity);
+        params.height = getStatusBarHeight();
 //        params.format = PixelFormat.TRANSPARENT;
 
         mBlockView = new StatusBarBlockedView(this);
         mWM.addView(mBlockView, params);
+    }
+
+    private int getStatusBarHeight() {
+        // status bar height
+        int statusBarHeight = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+
+        return statusBarHeight;
+    }
+
+    private int getNavigationBarHeight() {
+        // navigation bar height
+        int navigationBarHeight = 0;
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            navigationBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+
+        return navigationBarHeight;
     }
 
     public class StatusBarBlockedView extends ViewGroup {
@@ -132,7 +175,7 @@ public class BlockedActivity extends Activity {
 
         @Override
         public boolean onInterceptTouchEvent(MotionEvent ev) {
-            Log.v("customViewGroup", "**********Intercepted");
+            Log.e("StatusBarBlockedView", "Intercepted");
             return true;
         }
     }
