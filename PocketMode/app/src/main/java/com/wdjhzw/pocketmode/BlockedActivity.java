@@ -3,10 +3,11 @@ package com.wdjhzw.pocketmode;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,15 @@ public class BlockedActivity extends Activity {
     private static BlockedActivity mInstance;
 
     private WindowManager mWM = null;
-    private StatusBarBlockedView mBlockView = null;
+    private StatusBarBlockedView mBlockedView = null;
     private View mDecorView = null;
+    private WindowManager.LayoutParams mBlockedViewParams;
+
+    private boolean mIsVolumeDownKeyDown;
+    private boolean mIsVolumeUpKeyDown;
+    private boolean mIsDoubleKeyDownInSameTime;
+    private int mLastRepeatCount;
+    private int mLastKeyCode;
 
     public static BlockedActivity getInstance() {
         return mInstance;
@@ -37,13 +45,7 @@ public class BlockedActivity extends Activity {
             mInstance = this;
         }
 
-//        registerReceiver(new BootReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                String reason = intent.getStringExtra("reason");
-//                Log.e(TAG, "reason:" + reason);
-//            }
-//        }, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        mLastRepeatCount = -1;
 
         mWM = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
@@ -61,12 +63,12 @@ public class BlockedActivity extends Activity {
             }
         });
 
-        hideSystemUI();
+        mBlockedView = new StatusBarBlockedView(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager
                 .LayoutParams.FLAG_SHOW_WALLPAPER);
 
-//        setContentView(R.layout.activity_locked_screen);
+        setContentView(R.layout.activity_locked_screen);
 //        LinearLayout l = (LinearLayout) findViewById(R.id.background);
 //        l.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -80,6 +82,7 @@ public class BlockedActivity extends Activity {
         super.onStart();
         Log.e(TAG, "onStart");
         disableStatusBar();
+        hideSystemUI();
     }
 
     @Override
@@ -92,8 +95,12 @@ public class BlockedActivity extends Activity {
     protected void onResume() {
         super.onResume();
         Log.e(TAG, "onResume");
-        Log.e(TAG, getStatusBarHeight() + ":" + getNavigationBarHeight() + ":" + getResources()
-                .getDisplayMetrics().scaledDensity);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e(TAG, "onPause");
     }
 
     @Override
@@ -101,8 +108,8 @@ public class BlockedActivity extends Activity {
         super.onStop();
         Log.e(TAG, "onStop");
 
-        if (mBlockView != null) {
-            mWM.removeView(mBlockView);
+        if (mBlockedView != null) {
+            mWM.removeView(mBlockedView);
         }
     }
 
@@ -124,21 +131,29 @@ public class BlockedActivity extends Activity {
     }
 
     private void disableStatusBar() {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-        params.gravity = Gravity.BOTTOM;
-        params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+        mWM.addView(mBlockedView, getBlockedViewLayoutParams());
+    }
+
+    @NonNull
+    private WindowManager.LayoutParams getBlockedViewLayoutParams() {
+        if (mBlockedViewParams != null){
+            return mBlockedViewParams;
+        }
+
+        mBlockedViewParams = new WindowManager.LayoutParams();
+        mBlockedViewParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        mBlockedViewParams.gravity = Gravity.TOP;
+        mBlockedViewParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 // this is to enable the notification to receive touch events
-//                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                 // Draws over status bar
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = getStatusBarHeight();
-//        params.format = PixelFormat.TRANSPARENT;
+        mBlockedViewParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        mBlockedViewParams.height = getStatusBarHeight();
+//        mBlockedViewParams.format = PixelFormat.TRANSPARENT;
 
-        mBlockView = new StatusBarBlockedView(this);
-        mWM.addView(mBlockView, params);
+        return mBlockedViewParams;
     }
 
     private int getStatusBarHeight() {
@@ -147,20 +162,50 @@ public class BlockedActivity extends Activity {
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+            Log.e(TAG, "status bar height:" + statusBarHeight);
         }
 
         return statusBarHeight;
     }
 
-    private int getNavigationBarHeight() {
-        // navigation bar height
-        int navigationBarHeight = 0;
-        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            navigationBarHeight = getResources().getDimensionPixelSize(resourceId);
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        Log.e(TAG, "key:" + event.getKeyCode() + ", action:" + event.getAction() + ", repeat " +
+                "count:" + event.getRepeatCount());
+
+        int keyCode = event.getKeyCode();
+        int action = event.getAction();
+        int repeatCount = event.getRepeatCount();
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            mIsVolumeDownKeyDown = (action == KeyEvent.ACTION_DOWN);
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            mIsVolumeUpKeyDown = (action == KeyEvent.ACTION_DOWN);
+        } else {
+            return true;
         }
 
-        return navigationBarHeight;
+        if (mLastRepeatCount == 0 && repeatCount == 0) {
+            Log.e(TAG, repeatCount + ":" + mIsVolumeDownKeyDown + ":" + mIsVolumeUpKeyDown + ":" +
+                    keyCode + ":" + mLastKeyCode);
+            if (mIsVolumeDownKeyDown && mIsVolumeUpKeyDown && keyCode != mLastKeyCode) {
+                mIsDoubleKeyDownInSameTime = true;
+            } else {
+                mIsDoubleKeyDownInSameTime = false;
+            }
+        }
+
+        if (repeatCount > 20 && mIsDoubleKeyDownInSameTime) {
+            // dispatchKeyEvent will be also called one more time after this, between onPause and
+            // onStop.mIsDoubleKeyDownInSameTime & mIsVolumeDownKeyDown & mIsVolumeUpKeyDown will be
+            // set automatically.
+            moveTaskToBack(false);
+        }
+
+        mLastRepeatCount = repeatCount;
+        mLastKeyCode = keyCode;
+
+        return true;
     }
 
     public class StatusBarBlockedView extends ViewGroup {

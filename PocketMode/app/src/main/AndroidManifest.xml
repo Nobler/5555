@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
 
     <application
         android:allowBackup="true"
@@ -26,8 +27,8 @@
         <activity
             android:name=".BlockedActivity"
             android:excludeFromRecents="true"
-            android:taskAffinity="com.wdjhzw.pocketmode.sub"
             android:screenOrientation="portrait"
+            android:taskAffinity="com.wdjhzw.pocketmode.sub"
             android:theme="@style/LockedScreen">
         </activity>
 

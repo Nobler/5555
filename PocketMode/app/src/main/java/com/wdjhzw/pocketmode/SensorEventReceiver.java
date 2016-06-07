@@ -21,7 +21,7 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
     private Context mContext;
     private SensorManager mSM;
     private Sensor mProximitySensor;
-    private boolean isInBack = true;
+    private boolean mIsBlockedActivityInBack = true;
 
     public SensorEventReceiver(Context context, SensorManager sm, Sensor s) {
         mContext = context;
@@ -41,12 +41,12 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
                 break;
             case Intent.ACTION_SCREEN_OFF:
                 Log.e(TAG, "ACTION_SCREEN_OFF");
-                if (!isInBack) {
-                    hideBlockActivity();
+                if (!mIsBlockedActivityInBack) {
+                    hideBlockedActivity();
                     Log.e(TAG, "hide activity");
                     mSM.unregisterListener(this);
                     Log.e(TAG, "Sensor OFF");
-                    isInBack = true;
+                    mIsBlockedActivityInBack = true;
                 }
                 break;
             case Intent.ACTION_SCREEN_ON:
@@ -78,19 +78,19 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
             Log.e(TAG, "show activity");
             mContext.startActivity(new Intent().setClass(mContext, BlockedActivity.class).addFlags
                     (Intent.FLAG_ACTIVITY_NEW_TASK));
-            isInBack = false;
+            mIsBlockedActivityInBack = false;
         } else {
-            if (!isInBack) {
-                hideBlockActivity();
+            if (!mIsBlockedActivityInBack) {
+                hideBlockedActivity();
                 Log.e(TAG, "hide activity");
-                isInBack = true;
+                mIsBlockedActivityInBack = true;
             }
             mSM.unregisterListener(this);
             Log.e(TAG, "Sensor OFF");
         }
     }
 
-    private void hideBlockActivity() {
+    private void hideBlockedActivity() {
         BlockedActivity activity = BlockedActivity.getInstance();
         if (activity != null) {
             activity.moveTaskToBack(false);
