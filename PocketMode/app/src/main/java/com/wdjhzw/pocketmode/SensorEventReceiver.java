@@ -76,8 +76,8 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
             }
 
             Log.e(TAG, "show activity");
-            mContext.startActivity(new Intent().setClass(mContext, BlockedActivity.class).addFlags
-                    (Intent.FLAG_ACTIVITY_NEW_TASK));
+            mContext.startActivity(new Intent().setClass(mContext, BlockedActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             mIsBlockedActivityInBack = false;
         } else {
             if (!mIsBlockedActivityInBack) {

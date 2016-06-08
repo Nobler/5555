@@ -1,6 +1,7 @@
 package com.wdjhzw.pocketmode;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,12 +13,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+
+import java.awt.font.TextAttribute;
 
 /**
  * Created by houzhiwei on 16/5/20.
  */
 public class BlockedActivity extends Activity {
-    private static final String TAG = "BlockedActivity";
+    public static final String TAG = "BlockedActivity";
 
     private static BlockedActivity mInstance;
 
@@ -31,6 +36,8 @@ public class BlockedActivity extends Activity {
     private boolean mIsDoubleKeyDownInSameTime;
     private int mLastRepeatCount;
     private int mLastKeyCode;
+
+    private ProgressBar mProcessBar;
 
     public static BlockedActivity getInstance() {
         return mInstance;
@@ -69,18 +76,14 @@ public class BlockedActivity extends Activity {
                 .LayoutParams.FLAG_SHOW_WALLPAPER);
 
         setContentView(R.layout.activity_locked_screen);
-//        LinearLayout l = (LinearLayout) findViewById(R.id.background);
-//        l.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//            }
-//        });
+        mProcessBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.e(TAG, "onStart");
+
         disableStatusBar();
         hideSystemUI();
     }
@@ -136,7 +139,7 @@ public class BlockedActivity extends Activity {
 
     @NonNull
     private WindowManager.LayoutParams getBlockedViewLayoutParams() {
-        if (mBlockedViewParams != null){
+        if (mBlockedViewParams != null) {
             return mBlockedViewParams;
         }
 
@@ -185,21 +188,27 @@ public class BlockedActivity extends Activity {
             return true;
         }
 
-        if (mLastRepeatCount == 0 && repeatCount == 0) {
-            Log.e(TAG, repeatCount + ":" + mIsVolumeDownKeyDown + ":" + mIsVolumeUpKeyDown + ":" +
-                    keyCode + ":" + mLastKeyCode);
-            if (mIsVolumeDownKeyDown && mIsVolumeUpKeyDown && keyCode != mLastKeyCode) {
+
+        if (mIsVolumeDownKeyDown && mIsVolumeUpKeyDown) {
+            if (mLastRepeatCount == 0 && repeatCount == 0 && keyCode != mLastKeyCode) {
                 mIsDoubleKeyDownInSameTime = true;
-            } else {
-                mIsDoubleKeyDownInSameTime = false;
             }
+        } else {
+            mIsDoubleKeyDownInSameTime = false;
         }
 
-        if (repeatCount > 20 && mIsDoubleKeyDownInSameTime) {
-            // dispatchKeyEvent will be also called one more time after this, between onPause and
-            // onStop.mIsDoubleKeyDownInSameTime & mIsVolumeDownKeyDown & mIsVolumeUpKeyDown will be
-            // set automatically.
-            moveTaskToBack(false);
+        if (mIsDoubleKeyDownInSameTime) {
+            mProcessBar.setVisibility(View.VISIBLE);
+            mProcessBar.setProgress(mProcessBar.getMax() * repeatCount / 21);
+
+            if (repeatCount > 20) {
+                // dispatchKeyEvent will be also called one more time after this, between onPause
+                // and onStop. mIsDoubleKeyDownInSameTime & mIsVolumeDownKeyDown &
+                // mIsVolumeUpKeyDown will be set automatically.
+                moveTaskToBack(false);
+            }
+        } else {
+            mProcessBar.setVisibility(View.INVISIBLE);
         }
 
         mLastRepeatCount = repeatCount;
