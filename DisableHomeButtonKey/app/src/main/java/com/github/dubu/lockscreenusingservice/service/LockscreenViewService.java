@@ -147,7 +147,6 @@ public class LockscreenViewService extends Service {
     }
 
     private void attachLockScreenView() {
-
         if (null != mWindowManager && null != mLockscreenView && null != mParams) {
             mLockscreenView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -158,9 +157,7 @@ public class LockscreenViewService extends Service {
             mWindowManager.addView(mLockscreenView, mParams);
             settingLockView();
         }
-
     }
-
 
     private boolean dettachLockScreenView() {
         if (null != mWindowManager && null != mLockscreenView) {
@@ -173,7 +170,6 @@ public class LockscreenViewService extends Service {
             return false;
         }
     }
-
 
     private void settingLockView() {
         mBackgroundLayout = (RelativeLayout) mLockscreenView.findViewById(R.id.lockscreen_background_layout);

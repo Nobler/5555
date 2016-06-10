@@ -27,18 +27,16 @@
             </intent-filter>
         </activity>
 
-        <!--<service android:name=".service.LockscreenService" >-->
-        <!--</service>-->
-        <!--<service android:name=".service.LockscreenViewService" >-->
-        <!--</service>-->
-
         <activity
             android:name="com.github.dubu.lockscreenusingservice.LockscreenActivity" >
         </activity>
+
         <service android:name="com.github.dubu.lockscreenusingservice.service.LockscreenService" >
         </service>
+
         <service android:name="com.github.dubu.lockscreenusingservice.service.LockscreenViewService" >
         </service>
+
     </application>
 
 </manifest>

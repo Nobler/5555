@@ -26,8 +26,6 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferencesUtil.init(mContext);
 
         mSwitchd = (SwitchCompat) this.findViewById(R.id.switch_locksetting);
-        mSwitchd.setTextOn("yes");
-        mSwitchd.setTextOff("no");
         mSwitchd.setChecked(SharedPreferencesUtil.get(Lockscreen.ISLOCK));
 
         mSwitchd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
