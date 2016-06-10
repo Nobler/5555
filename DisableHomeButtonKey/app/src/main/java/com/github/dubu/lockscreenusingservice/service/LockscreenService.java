@@ -19,7 +19,8 @@ import com.github.dubu.lockscreenusingservice.LockscreenUtil;
  */
 public class LockscreenService extends Service {
     private final String TAG = "LockscreenService";
-    //    public static final String LOCKSCREENSERVICE_FIRST_START = "LOCKSCREENSERVICE_FIRST_START";
+    //    public static final String LOCKSCREENSERVICE_FIRST_START =
+    // "LOCKSCREENSERVICE_FIRST_START";
     private int mServiceStartId = 0;
     private Context mContext = null;
 
@@ -29,10 +30,13 @@ public class LockscreenService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (null != context) {
                 if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                    Intent startLockscreenIntent = new Intent(mContext, LockscreenViewService.class);
+                    Intent startLockscreenIntent = new Intent(mContext, LockscreenViewService
+                            .class);
                     stopService(startLockscreenIntent);
-                    TelephonyManager tManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-                    boolean isPhoneIdle = tManager.getCallState() == TelephonyManager.CALL_STATE_IDLE;
+                    TelephonyManager tManager = (TelephonyManager) context.getSystemService
+                            (Context.TELEPHONY_SERVICE);
+                    boolean isPhoneIdle = tManager.getCallState() == TelephonyManager
+                            .CALL_STATE_IDLE;
                     if (isPhoneIdle) {
                         startLockscreenActivity();
                     }
@@ -40,8 +44,11 @@ public class LockscreenService extends Service {
             }
         }
     };
+    private KeyguardManager mKeyManager = null;
+    private KeyguardManager.KeyguardLock mKeyLock = null;
 
     private void stateRecever(boolean isStartRecever) {
+        Log.e(TAG, (isStartRecever ? "reg" : "unreg") + "SCREEN_OFF receiver");
         if (isStartRecever) {
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_SCREEN_OFF);
@@ -53,16 +60,16 @@ public class LockscreenService extends Service {
         }
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();
         mContext = this;
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.e(TAG, "onStartCommand");
+
         mServiceStartId = startId;
         stateRecever(true);
         Intent bundleIntet = intent;
@@ -75,24 +82,17 @@ public class LockscreenService extends Service {
         return LockscreenService.START_STICKY;
     }
 
-
     private void setLockGuard() {
+        Log.e(TAG, "set LockGuard");
         initKeyguardService();
-        if (!LockscreenUtil.getInstance(mContext).isStandardKeyguardState()) {
-            setStandardKeyguardState(false);
-        } else {
-            setStandardKeyguardState(true);
-        }
+        setStandardKeyguardState(LockscreenUtil.getInstance(mContext).isStandardKeyguardState());
     }
-
-    private KeyguardManager mKeyManager = null;
-    private KeyguardManager.KeyguardLock mKeyLock = null;
 
     private void initKeyguardService() {
         if (null != mKeyManager) {
             mKeyManager = null;
         }
-        mKeyManager =(KeyguardManager)getSystemService(mContext.KEYGUARD_SERVICE);
+        mKeyManager = (KeyguardManager) getSystemService(mContext.KEYGUARD_SERVICE);
         if (null != mKeyManager) {
             if (null != mKeyLock) {
                 mKeyLock = null;
@@ -103,13 +103,11 @@ public class LockscreenService extends Service {
 
     private void setStandardKeyguardState(boolean isStart) {
         if (isStart) {
-            if(null != mKeyLock){
+            if (null != mKeyLock) {
                 mKeyLock.reenableKeyguard();
             }
-        }
-        else {
-
-            if(null != mKeyManager){
+        } else {
+            if (null != mKeyManager) {
                 mKeyLock.disableKeyguard();
             }
         }
@@ -129,6 +127,7 @@ public class LockscreenService extends Service {
     }
 
     private void startLockscreenActivity() {
+        Log.e(TAG, "start LockscreenActivity");
         Intent startLockscreenActIntent = new Intent(mContext, LockscreenActivity.class);
         startLockscreenActIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(startLockscreenActIntent);

@@ -17,6 +17,7 @@ import com.github.dubu.lockscreenusingservice.SharedPreferencesUtil;
 public class MainActivity extends ActionBarActivity {
     private SwitchCompat mSwitchd = null;
     private Context mContext = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,55 +28,19 @@ public class MainActivity extends ActionBarActivity {
         mSwitchd = (SwitchCompat) this.findViewById(R.id.switch_locksetting);
         mSwitchd.setTextOn("yes");
         mSwitchd.setTextOff("no");
-        boolean lockState = SharedPreferencesUtil.get(Lockscreen.ISLOCK);
-        if (lockState) {
-            mSwitchd.setChecked(true);
-
-        } else {
-            mSwitchd.setChecked(false);
-
-        }
+        mSwitchd.setChecked(SharedPreferencesUtil.get(Lockscreen.ISLOCK));
 
         mSwitchd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferencesUtil.setBoolean(Lockscreen.ISLOCK, isChecked);
                 if (isChecked) {
-                    SharedPreferencesUtil.setBoolean(Lockscreen.ISLOCK, true);
                     Lockscreen.getInstance(mContext).startLockscreenService();
                 } else {
-                    SharedPreferencesUtil.setBoolean(Lockscreen.ISLOCK, false);
                     Lockscreen.getInstance(mContext).stopLockscreenService();
                 }
 
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

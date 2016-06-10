@@ -38,8 +38,6 @@ public class LockscreenActivity extends Activity {
                     break;
             }
         }
-
-        ;
     };
 
 
@@ -48,15 +46,10 @@ public class LockscreenActivity extends Activity {
         super.onCreate(arg0);
         sLockscreenActivityContext = this;
         mMainHandler = new SendMassgeHandler();
-//        getWindow().setType(2004);
-//        getWindow().addFlags(524288);
-//        getWindow().addFlags(4194304);
-        ///
+
         getWindow().setType(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -75,14 +68,9 @@ public class LockscreenActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            finishLockscreenAct();
+            finish();
         }
     }
-
-    private void finishLockscreenAct() {
-        finish();
-    }
-
 
     private void initLockScreenUi() {
         setContentView(R.layout.activity_lockscreen);
@@ -90,19 +78,8 @@ public class LockscreenActivity extends Activity {
         mLockscreenMainLayout.getBackground().setAlpha(15);
     }
 
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        return super.dispatchTouchEvent(ev);
-    }
-
     private void setLockGuard() {
-        boolean isLockEnable = false;
-        if (!LockscreenUtil.getInstance(sLockscreenActivityContext).isStandardKeyguardState()) {
-            isLockEnable = false;
-        } else {
-            isLockEnable = true;
-        }
+        boolean isLockEnable = LockscreenUtil.getInstance(sLockscreenActivityContext).isStandardKeyguardState();
 
         Intent startLockscreenIntent = new Intent(this, LockscreenViewService.class);
         startService(startLockscreenIntent);
@@ -111,30 +88,10 @@ public class LockscreenActivity extends Activity {
         SharedPreferencesUtil.setBoolean(Lockscreen.ISSOFTKEY, isSoftkeyEnable);
         if (!isSoftkeyEnable) {
             mMainHandler.sendEmptyMessage(0);
-        } else if (isSoftkeyEnable) {
+        } else {
             if (isLockEnable) {
                 mMainHandler.sendEmptyMessage(0);
             }
         }
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-    }
-
 }

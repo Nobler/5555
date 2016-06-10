@@ -77,7 +77,7 @@ public class LockscreenViewService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mMainHandler = new SendMassgeHandler();
-        if (isLockScreenAble()) {
+        if (SharedPreferencesUtil.get(Lockscreen.ISLOCK)) {
             if (null != mWindowManager) {
                 if (null != mLockscreenView) {
                     mWindowManager.removeView(mLockscreenView);
@@ -145,17 +145,6 @@ public class LockscreenViewService extends Service {
 
         }
     }
-
-    private boolean isLockScreenAble() {
-        boolean isLock = SharedPreferencesUtil.get(Lockscreen.ISLOCK);
-        if (isLock) {
-            isLock = true;
-        } else {
-            isLock = false;
-        }
-        return isLock;
-    }
-
 
     private void attachLockScreenView() {
 

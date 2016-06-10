@@ -31,6 +31,11 @@ public class LockscreenUtil {
     private LockscreenUtil(Context context) {
         mContext = context;
     }
+
+    /**
+     *
+     * @return true if a PIN, pattern or password is set or a SIM card is locked.
+     */
     public boolean isStandardKeyguardState() {
         boolean isStandardKeyguqrd = false;
         KeyguardManager keyManager =(KeyguardManager) mContext.getSystemService(mContext.KEYGUARD_SERVICE);
