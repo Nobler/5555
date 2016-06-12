@@ -17,6 +17,8 @@ import android.util.Log;
 public class MainService extends Service {
     private static final String TAG = "MainService";
 
+    public static final String ACTION_START = "com.wdjhzw.pocketmode.START";
+
     private SensorEventReceiver mReceiver;
 
     @Override
@@ -30,9 +32,9 @@ public class MainService extends Service {
         Sensor s = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction("android.intent.action.SCREEN_OFF");
-        filter.addAction("android.intent.action.SCREEN_ON");
-        filter.addAction("android.intent.action.USER_PRESENT");
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
 
         registerReceiver(mReceiver = new SensorEventReceiver(this, sm, s), filter);
 
