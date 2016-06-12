@@ -19,11 +19,10 @@ import com.github.dubu.lockscreenusingservice.LockscreenUtil;
  */
 public class LockscreenService extends Service {
     private final String TAG = "LockscreenService";
-    //    public static final String LOCKSCREENSERVICE_FIRST_START =
-    // "LOCKSCREENSERVICE_FIRST_START";
-    private int mServiceStartId = 0;
     private Context mContext = null;
 
+    private KeyguardManager mKeyManager = null;
+    private KeyguardManager.KeyguardLock mKeyLock = null;
 
     private BroadcastReceiver mLockscreenReceiver = new BroadcastReceiver() {
         @Override
@@ -38,17 +37,16 @@ public class LockscreenService extends Service {
                     boolean isPhoneIdle = tManager.getCallState() == TelephonyManager
                             .CALL_STATE_IDLE;
                     if (isPhoneIdle) {
+                        Log.e(TAG, "SCREEN OFF: startLockscreenActivity");
                         startLockscreenActivity();
                     }
                 }
             }
         }
     };
-    private KeyguardManager mKeyManager = null;
-    private KeyguardManager.KeyguardLock mKeyLock = null;
 
     private void stateRecever(boolean isStartRecever) {
-        Log.e(TAG, (isStartRecever ? "reg" : "unreg") + "SCREEN_OFF receiver");
+        Log.e(TAG, (isStartRecever ? "reg" : "unreg") + " SCREEN_OFF receiver");
         if (isStartRecever) {
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_SCREEN_OFF);
@@ -70,7 +68,6 @@ public class LockscreenService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
 
-        mServiceStartId = startId;
         stateRecever(true);
         Intent bundleIntet = intent;
         if (null != bundleIntet) {
@@ -112,7 +109,6 @@ public class LockscreenService extends Service {
             }
         }
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {
