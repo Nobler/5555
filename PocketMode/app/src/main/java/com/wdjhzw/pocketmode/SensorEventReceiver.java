@@ -21,7 +21,7 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
     private Context mContext;
     private SensorManager mSM;
     private Sensor mProximitySensor;
-    private boolean mIsBlockedActivityInBack = true;
+    private boolean mIsBlockedViewShown = false;
 
     public SensorEventReceiver(Context context, SensorManager sm, Sensor s) {
         mContext = context;
@@ -36,17 +36,14 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
         switch (intent.getAction()) {
             case Intent.ACTION_USER_PRESENT:
                 Log.e(TAG, "ACTION_USER_PRESENT");
-                mSM.unregisterListener(this);
 
-                break;
             case Intent.ACTION_SCREEN_OFF:
                 Log.e(TAG, "ACTION_SCREEN_OFF");
-                if (!mIsBlockedActivityInBack) {
-                    hideBlockedActivity();
-                    Log.e(TAG, "hide activity");
+                if (mIsBlockedViewShown) {
+                    hideBlockedView();
                     mSM.unregisterListener(this);
                     Log.e(TAG, "Sensor OFF");
-                    mIsBlockedActivityInBack = true;
+                    mIsBlockedViewShown = false;
                 }
                 break;
             case Intent.ACTION_SCREEN_ON:
@@ -75,25 +72,28 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
                 return;
             }
 
-            Log.e(TAG, "show activity");
-            mContext.startService(new Intent(mContext, LaunchBlockedViewService.class));
-            mIsBlockedActivityInBack = false;
+            showBlockedView();
+            mIsBlockedViewShown = true;
         } else {
-            if (!mIsBlockedActivityInBack) {
-                hideBlockedActivity();
-                Log.e(TAG, "hide activity");
-                mIsBlockedActivityInBack = true;
+            if (mIsBlockedViewShown) {
+                hideBlockedView();
+                mIsBlockedViewShown = false;
             }
             mSM.unregisterListener(this);
             Log.e(TAG, "Sensor OFF");
         }
     }
 
-    private void hideBlockedActivity() {
-        BlockedActivity activity = BlockedActivity.getInstance();
-        if (activity != null) {
-            activity.moveTaskToBack(false);
-        }
+    private void showBlockedView() {
+        Log.e(TAG, "showBlockedView");
+        mContext.startService(new Intent(MainService.ACTION_SHOW_BLOCKED_VIEW).setClass(mContext,
+                MainService.class));
+    }
+
+    private void hideBlockedView() {
+        Log.e(TAG, "hideBlockedView");
+        mContext.startService(new Intent(MainService.ACTION_HIDE_BLOCKED_VIEW).setClass(mContext,
+                MainService.class));
     }
 
     @Override

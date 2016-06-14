@@ -22,13 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".BlockedActivity"
-            android:excludeFromRecents="true"
-            android:screenOrientation="portrait"
-            android:taskAffinity="com.wdjhzw.pocketmode.sub"
-            android:theme="@style/LockedScreen">
-        </activity>
 
         <service android:name=".MainService"/>
 
@@ -40,11 +33,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name=".LaunchBlockedViewService"
-            android:enabled="true"
-            android:exported="false">
-        </service>
     </application>
 
 </manifest>
