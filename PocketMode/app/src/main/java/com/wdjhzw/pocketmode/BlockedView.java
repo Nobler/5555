@@ -5,11 +5,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 /**
  * TODO: document your custom view class.
  */
-public class BlockedView extends LinearLayout {
+public class BlockedView extends RelativeLayout {
     public static final String TAG = "BlockedView";
 
     private boolean mIsVolumeDownKeyDown;
@@ -70,12 +71,12 @@ public class BlockedView extends LinearLayout {
     }
 
     /**
-     * Interface definition for a callback to be invoked when double volumn key are down in same
+     * Interface definition for a callback to be invoked when key state change
      * time.
      */
     public interface OnKeyStateChangeListener {
         /**
-         * Called when double volumn key are down in same.
+         * Called when double volume key state change
          *
          * @param downInSameTime Whether the double volume key are down in same time.
          * @param repeatCount    The repeat count double volume key are down in same.

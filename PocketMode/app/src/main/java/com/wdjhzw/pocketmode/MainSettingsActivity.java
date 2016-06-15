@@ -72,7 +72,7 @@ public class MainSettingsActivity extends AppCompatPreferenceActivity implements
         mBootStart = (SwitchPreference) findPreference(KEY_AUTO_START);
         mBootStart.setOnPreferenceChangeListener(this);
 
-        mBootReceiver = new ComponentName(this, BootReceiver.class);
+        mBootReceiver = new ComponentName(this, MainService.BootReceiver.class);
     }
 
     @Override

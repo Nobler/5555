@@ -1,6 +1,7 @@
 package com.wdjhzw.pocketmode;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -24,19 +25,14 @@ public class MainService extends Service {
     public static final String ACTION_SHOW_BLOCKED_VIEW = "com.wdjhzw.pocketmode.SHOW_BLOCKED_VIEW";
     public static final String ACTION_HIDE_BLOCKED_VIEW = "com.wdjhzw.pocketmode.HIDE_BLOCKED_VIEW";
     public static final String TAG = "MainService";
+    private int mRepeatCount;
     private SensorEventReceiver mReceiver;
     private BlockedView mBlockedView;
     private WindowManager.LayoutParams mLayoutParams;
     private WindowManager mWindowManager;
-
     private boolean mIsBlockedViewShown;
     private ProgressBar mProgressBar;
-
     private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
     };
 
     @Override
@@ -59,6 +55,7 @@ public class MainService extends Service {
         mReceiver = new SensorEventReceiver(this, sensorManager, proximitySensor);
         registerReceiver(mReceiver, filter);
 
+        mRepeatCount = getResources().getInteger(R.integer.repeat_count);
         mWindowManager = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
         initBlockedViewLayoutParams();
         inflateBlockedView();
@@ -68,7 +65,7 @@ public class MainService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
-        Log.e(TAG, "onStartCommand:" + action + ":" + toString());
+        Log.e(TAG, "onStartCommand:" + action);
 
         if (action != null) {
             if (action.equals(ACTION_SHOW_BLOCKED_VIEW)) {
@@ -91,8 +88,10 @@ public class MainService extends Service {
     private void initBlockedViewLayoutParams() {
         mLayoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams
-                .TYPE_SYSTEM_ERROR, WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER, PixelFormat.TRANSLUCENT);
+                .TYPE_SYSTEM_ERROR, WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, PixelFormat
+                .TRANSLUCENT);
+
+        mLayoutParams.windowAnimations = R.style.BlockedView;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mLayoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
@@ -116,9 +115,9 @@ public class MainService extends Service {
                 }
 
                 mProgressBar.setVisibility(View.VISIBLE);
-                mProgressBar.setProgress(mProgressBar.getMax() * repeatCount / 21);
+                mProgressBar.setProgress(repeatCount);
 
-                if (repeatCount > 20) {
+                if (repeatCount > mRepeatCount) {
                     hideBlockedView();
                     mHandler.postDelayed(new Runnable() {
                         @Override
@@ -149,4 +148,14 @@ public class MainService extends Service {
         }
     }
 
+    public class BootReceiver extends BroadcastReceiver {
+        public BootReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            context.startService(new Intent(context, MainService.class));
+            Log.e("BootReceiver", "boot");
+        }
+    }
 }
