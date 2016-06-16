@@ -16,4 +16,5 @@
     <string name="toast_service_start">Service start</string>
     <string name="toast_service_stop">Service stop</string>
     <string name="toast_occur_error">Operation failed</string>
+    <string name="blocked_view_info">Do not cover the top of the screen or\n press the <font color='#FF0000'><b>Volume +</b></font> and <font color="#FF0000"><b>Volume -</b></font> simultaneously.</string>
 </resources>

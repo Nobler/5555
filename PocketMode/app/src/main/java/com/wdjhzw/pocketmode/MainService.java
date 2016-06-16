@@ -11,7 +11,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,7 +101,7 @@ public class MainService extends Service {
 
     private void inflateBlockedView() {
         mBlockedView = (BlockedView) ((LayoutInflater) getSystemService(Context
-                .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.activity_locked_screen, null);
+                .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_view, null);
 
         mProgressBar = (ProgressBar) mBlockedView.findViewById(R.id.progressBar);
         mBlockedView.setOnKeyStateChangeListener(new BlockedView.OnKeyStateChangeListener() {

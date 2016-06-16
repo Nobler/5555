@@ -2,7 +2,16 @@
 <com.wdjhzw.pocketmode.BlockedView xmlns:android="http://schemas.android.com/apk/res/android"
                                    android:layout_width="match_parent"
                                    android:layout_height="match_parent"
-                                   android:background="@drawable/background">
+                                   android:background="@drawable/bg_blocked_view">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="14dp"
+        android:paddingTop="30dp"
+        android:text="@string/blocked_view_info"
+        android:textAlignment="center"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

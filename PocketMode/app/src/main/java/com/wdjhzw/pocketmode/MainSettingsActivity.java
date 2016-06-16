@@ -65,12 +65,21 @@ public class MainSettingsActivity extends AppCompatPreferenceActivity implements
 
         addPreferencesFromResource(R.xml.pref_main);
 
-        mDrawOverlays = (SwitchPreference) findPreference(KEY_CAN_DRAW_OVERLAYS);
-        mDrawOverlays.setOnPreferenceChangeListener(this);
         mStartService = (SwitchPreference) findPreference(KEY_START_SERVICE);
         mStartService.setOnPreferenceChangeListener(this);
         mBootStart = (SwitchPreference) findPreference(KEY_AUTO_START);
         mBootStart.setOnPreferenceChangeListener(this);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            // Permission "Draw over other apps" is added in Android M.
+            getPreferenceScreen().removePreference(findPreference("permission"));
+        } else {
+            mDrawOverlays = (SwitchPreference) findPreference(KEY_CAN_DRAW_OVERLAYS);
+            mDrawOverlays.setOnPreferenceChangeListener(this);
+
+            mStartService.setDependency(KEY_CAN_DRAW_OVERLAYS);
+            mBootStart.setDependency(KEY_CAN_DRAW_OVERLAYS);
+        }
 
         mBootReceiver = new ComponentName(this, MainService.BootReceiver.class);
     }
@@ -79,26 +88,26 @@ public class MainSettingsActivity extends AppCompatPreferenceActivity implements
     protected void onResume() {
         super.onResume();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mCanDrawOverlays = Settings.canDrawOverlays(this);
-        }
-        mDrawOverlays.setChecked(mCanDrawOverlays);
-
         mIsServiceStart = isServiceRunning(MAIN_SERVICE);
 
-        if (mCanDrawOverlays == false) {
-            // If permission is disabled, MainService should be stopped as well.
-            if (mIsServiceStart) {
-                setPreference(mStartService, false);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mCanDrawOverlays = Settings.canDrawOverlays(this);
+            mDrawOverlays.setChecked(mCanDrawOverlays);
 
-            // auto-start should be disabled too
-            if (mBootStart.isChecked()) {
-                setPreference(mBootStart, false);
+            if (mCanDrawOverlays == false) {
+                // If permission is disabled, MainService should be stopped as well.
+                if (mIsServiceStart) {
+                    setPreference(mStartService, false);
+                }
+
+                // auto-start should be disabled too
+                if (mBootStart.isChecked()) {
+                    setPreference(mBootStart, false);
+                }
             }
-        } else {
-            mStartService.setChecked(mIsServiceStart);
         }
+
+        mStartService.setChecked(mIsServiceStart);
     }
 
     /**
