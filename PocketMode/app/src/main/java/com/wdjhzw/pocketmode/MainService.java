@@ -9,13 +9,14 @@ import android.graphics.PixelFormat;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 /**
  * Created by houzhiwei on 16/5/23.
@@ -31,8 +32,7 @@ public class MainService extends Service {
     private WindowManager mWindowManager;
     private boolean mIsBlockedViewShown;
     private ProgressBar mProgressBar;
-    private Handler mHandler = new Handler() {
-    };
+    private TextView mTextView;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -74,7 +74,7 @@ public class MainService extends Service {
             }
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_STICKY;
     }
 
     @Override
@@ -103,32 +103,64 @@ public class MainService extends Service {
         mBlockedView = (BlockedView) ((LayoutInflater) getSystemService(Context
                 .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_view, null);
 
+        mTextView = (TextView) mBlockedView.findViewById(R.id.info);
+
         mProgressBar = (ProgressBar) mBlockedView.findViewById(R.id.progressBar);
         mBlockedView.setOnKeyStateChangeListener(new BlockedView.OnKeyStateChangeListener() {
+            /**
+             * <p>
+             *     Whether the blocked view is transparent.
+             * </p>
+             *
+             * <p>
+             *     When double key repeat count increase to 20, make blocked view being
+             *     transparent, blocked view will still dispatch key event. Users feel like the
+             *     blocked view is gone(actually not), then they release the double key, blocked
+             *     view go away.
+             * </p>
+             *
+             * <p>
+             *     This design is to avoid, when blocked view is gone, one of volume keys may be
+             *     still in down state, Lanuncher or Keyguard will dispatch the key event which
+             *     will result in sound notifaction showing. It is bad user experience.
+             *     There may exists a more elegant solution
+             * </p>
+             */
+            private boolean isBlockedViewTransparent = false;
 
             @Override
-            public void onDoubleVolumeKeyStateChange(boolean downInSameTime, int repeatCount) {
-                if (!downInSameTime) {
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    return;
-                }
+            public void onKeyStateChange(int keyState, int repeatCount) {
+                if (keyState == BlockedView.KeyState.STATE_DOUBLE_KEY_DOWN_SIMULTANEOUSLY) {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mProgressBar.setProgress(repeatCount);
 
-                mProgressBar.setVisibility(View.VISIBLE);
-                mProgressBar.setProgress(repeatCount);
-
-                if (repeatCount > mRepeatCount) {
-                    hideBlockedView();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-                            Log.e(TAG, "clean");
+                    if (!isBlockedViewTransparent) {
+                        if (repeatCount > mRepeatCount) {
+                            Log.e(TAG, "repeat count");
+                            isBlockedViewTransparent = true;
+//                            mBlockedView.startAnimation(AnimationUtils.loadAnimation(MainService
+//                                    .this, R.anim.fade_out));
+                            mBlockedView.setBackgroundResource(android.R.color.transparent);
+                            mTextView.setVisibility(View.INVISIBLE);
                         }
-                    }, 500);
+
+                        return;
+                    }
+                } else if (keyState == BlockedView.KeyState.STATE_DOUBLE_KEY_UP) {
+                    if (isBlockedViewTransparent) {
+                        Log.e(TAG, "double key up");
+                        isBlockedViewTransparent = false;
+                        hideBlockedView();
+                        mBlockedView.setBackgroundResource(R.drawable.bg_blocked_view);
+                        mTextView.setVisibility(View.VISIBLE);
+
+                        return;
+                    }
                 }
+
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
-
     }
 
     private void showBlockedView() {
@@ -139,8 +171,6 @@ public class MainService extends Service {
     }
 
     private void hideBlockedView() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-
         if (mIsBlockedViewShown) {
             mWindowManager.removeView(mBlockedView);
             mIsBlockedViewShown = false;

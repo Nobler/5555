@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 /**
@@ -13,12 +12,11 @@ import android.widget.RelativeLayout;
 public class BlockedView extends RelativeLayout {
     public static final String TAG = "BlockedView";
 
-    private boolean mIsVolumeDownKeyDown;
-    private boolean mIsVolumeUpKeyDown;
-    private boolean mIsDoubleKeyDownInSameTime;
+    boolean mIsVolumeDownKeyDown;
+    boolean mIsVolumeUpKeyDown;
+    private int mKeyState;
     private int mLastRepeatCount;
     private int mLastKeyCode;
-
     private OnKeyStateChangeListener mListener;
 
     public BlockedView(Context context) {
@@ -51,14 +49,19 @@ public class BlockedView extends RelativeLayout {
         }
 
         if (mIsVolumeDownKeyDown && mIsVolumeUpKeyDown) {
+            Log.e(TAG, "key down");
             if (mLastRepeatCount == 0 && repeatCount == 0 && keyCode != mLastKeyCode) {
-                mIsDoubleKeyDownInSameTime = true;
+                mKeyState = KeyState.STATE_DOUBLE_KEY_DOWN_SIMULTANEOUSLY;
+                Log.e(TAG, "STATE_DOUBLE_KEY_DOWN_SIMULTANEOUSLY");
             }
+        } else if (!mIsVolumeDownKeyDown && !mIsVolumeUpKeyDown && keyCode != mLastKeyCode) {
+            mKeyState = KeyState.STATE_DOUBLE_KEY_UP;
+            Log.e(TAG, "STATE_DOUBLE_KEY_UP");
         } else {
-            mIsDoubleKeyDownInSameTime = false;
+            mKeyState = KeyState.STATE_OTHERS;
         }
 
-        mListener.onDoubleVolumeKeyStateChange(mIsDoubleKeyDownInSameTime, repeatCount);
+        mListener.onKeyStateChange(mKeyState, repeatCount);
 
         mLastRepeatCount = repeatCount;
         mLastKeyCode = keyCode;
@@ -78,9 +81,15 @@ public class BlockedView extends RelativeLayout {
         /**
          * Called when double volume key state change
          *
-         * @param downInSameTime Whether the double volume key are down in same time.
-         * @param repeatCount    The repeat count double volume key are down in same.
+         * @param keyState    Whether the double volume key are down in same time.
+         * @param repeatCount The repeat count double volume key are down in same.
          */
-        void onDoubleVolumeKeyStateChange(boolean downInSameTime, int repeatCount);
+        void onKeyStateChange(int keyState, int repeatCount);
+    }
+
+    public static class KeyState {
+        public static final int STATE_DOUBLE_KEY_DOWN_SIMULTANEOUSLY = 0;
+        public static final int STATE_DOUBLE_KEY_UP = 1;
+        public static final int STATE_OTHERS = 2;
     }
 }
