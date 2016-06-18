@@ -12,8 +12,8 @@ import android.widget.RelativeLayout;
 public class BlockedView extends RelativeLayout {
     public static final String TAG = "BlockedView";
 
-    boolean mIsVolumeDownKeyDown;
-    boolean mIsVolumeUpKeyDown;
+    private boolean mIsVolumeDownKeyDown;
+    private boolean mIsVolumeUpKeyDown;
     private int mKeyState;
     private int mLastRepeatCount;
     private int mLastKeyCode;

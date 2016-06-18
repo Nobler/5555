@@ -66,6 +66,7 @@ public class MainService extends Service {
         String action = intent.getAction();
         Log.e(TAG, "onStartCommand:" + action);
 
+        // SensorEventReceiver use the action to call MainService's feature.
         if (action != null) {
             if (action.equals(ACTION_SHOW_BLOCKED_VIEW)) {
                 showBlockedView();
