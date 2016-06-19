@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.wdjhzw.pocketmode.BlockedView xmlns:android="http://schemas.android.com/apk/res/android"
-                                   android:layout_width="match_parent"
-                                   android:layout_height="match_parent"
-                                   android:background="@drawable/bg_blocked_view">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_blocked_view">
 
     <TextView
+        android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/info"
         android:layout_alignParentTop="true"
         android:layout_margin="14dp"
         android:paddingTop="30dp"
         android:text="@string/blocked_view_info"
-        android:textAlignment="center"/>
+        android:textAlignment="center" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="2dp"
         android:layout_alignParentTop="true"
         android:max="@integer/repeat_count"
-        android:visibility="invisible"/>
+        android:progressDrawable="@drawable/bg_progressbar"
+        android:visibility="invisible" />
 </com.wdjhzw.pocketmode.BlockedView>
