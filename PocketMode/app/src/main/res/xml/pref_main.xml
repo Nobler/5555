@@ -10,24 +10,15 @@
             android:defaultValue="false"
             android:key="can_draw_overlays"
             android:summary="@string/can_draw_overlays_summary"
-            android:title="@string/can_draw_overlays"/>
+            android:title="@string/can_draw_overlays" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/general">
-        <!-- A 'parent' preference, which enables/disables child preferences (below)
-        when checked/unchecked. -->
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="start_service"
-            android:title="@string/start_service"/>
-
+    <PreferenceCategory android:title="@string/general">
         <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
         <SwitchPreference
             android:defaultValue="false"
             android:key="auto_start"
-            android:persistent="true"
-            android:title="@string/auto_start"/>
+            android:title="@string/auto_start" />
     </PreferenceCategory>
 
 </PreferenceScreen>

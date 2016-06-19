@@ -16,4 +16,6 @@
     <string name="auto_start">开机启动</string>
     <string name="can_draw_overlays">允许在其他应用的上层显示</string>
     <string name="toast_service_stop">服务停止</string>
+    <string name="permission_hint">请打开相应的权限</string>
+    <string name="jump_to">去设置</string>
 </resources>
