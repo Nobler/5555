@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
+import android.view.animation.AnimationUtils;
 
 /**
  * Implementation of App Widget functionality.
@@ -11,23 +12,31 @@ import android.util.AttributeSet;
 public class CheckableFab extends FloatingActionButton {
     private boolean mIsChecked;
     private boolean mIsEnabled;
+    private Context mContext;
 
     public CheckableFab(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public CheckableFab(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public CheckableFab(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mContext = context;
     }
 
     public void setChecked(boolean checked) {
         mIsChecked = checked;
-        setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(checked ? android.R
-                .color.holo_green_light : R.color.colorAccent)));
+        setImageResource(mIsChecked ? android.R.drawable.ic_media_pause : android.R.drawable
+                .ic_media_play);
+
+        if (mIsChecked) {
+            startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.breath));
+        } else {
+            clearAnimation();
+        }
     }
 
     @Override
@@ -41,19 +50,13 @@ public class CheckableFab extends FloatingActionButton {
 //        super.setEnabled(enabled);
         mIsEnabled = enabled;
 
-        int colorId;
-
-        if (enabled) {
-            if (mIsChecked) {
-                colorId = android.R.color.holo_green_light;
-            } else {
-                colorId = R.color.colorAccent;
-            }
-        } else {
-            colorId = android.R.color.darker_gray;
-        }
-
+        int colorId = enabled ? R.color.colorAccent : android.R.color.darker_gray;
         setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(colorId)));
+
+        if (!enabled && mIsChecked) {
+            setImageResource(android.R.drawable.ic_media_play);
+            clearAnimation();
+        }
     }
 }
 
