@@ -16,17 +16,17 @@ import android.util.Log;
 
 public class MainSettingsFragment extends PreferenceFragment implements Preference
         .OnPreferenceChangeListener {
+    public static final String KEY_CAN_DRAW_OVERLAYS = "can_draw_overlays";
+    public static final String KEY_START_AT_BOOT = "start_at_boot";
+    public static final String KEY_SHOW_BLOCKED_INFO = "show_blocked_info";
     private static final String TAG = "MainSettingsFragment";
-
-    private static final String KEY_CAN_DRAW_OVERLAYS = "can_draw_overlays";
-    private static final String KEY_AUTO_START = "auto_start";
-
     private ComponentName mBootReceiver;
 
     private MainActivity mContext;
     private boolean mCanDrawOverlays;
     private SwitchPreference mDrawOverlays;
     private SwitchPreference mBootStart;
+    private SwitchPreference mShowBlockedInfo;
 
     @Override
     public void onAttach(Context context) {
@@ -41,8 +41,10 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
         addPreferencesFromResource(R.xml.pref_main);
 
-        mBootStart = (SwitchPreference) findPreference(KEY_AUTO_START);
+        mBootStart = (SwitchPreference) findPreference(KEY_START_AT_BOOT);
         mBootStart.setOnPreferenceChangeListener(this);
+        mShowBlockedInfo = (SwitchPreference) findPreference(KEY_SHOW_BLOCKED_INFO);
+        mShowBlockedInfo.setOnPreferenceChangeListener(this);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             // Permission "Draw over other apps" is added in Android M.
@@ -51,7 +53,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             mDrawOverlays = (SwitchPreference) findPreference(KEY_CAN_DRAW_OVERLAYS);
             mDrawOverlays.setOnPreferenceChangeListener(this);
 
-            mBootStart.setDependency(KEY_CAN_DRAW_OVERLAYS);
+            findPreference("general").setDependency(KEY_CAN_DRAW_OVERLAYS);
         }
 
         mBootReceiver = new ComponentName(mContext, MainService.BootReceiver.class);
@@ -99,7 +101,12 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager
                     .COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
             Log.e(TAG, "" + mContext.getPackageManager().getComponentEnabledSetting(mBootReceiver));
+        } else if (preference == mShowBlockedInfo) {
+            mContext.startService(new Intent(mContext, MainService.class).setAction(MainService
+                    .ACTION_UPDATE_BLOCKED_VIEW).putExtra(MainService
+                    .EXTRA_IS_BLOCKED_INFO_VISIBLE, value));
         }
+
         return true;
     }
 

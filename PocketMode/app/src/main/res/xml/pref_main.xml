@@ -10,15 +10,21 @@
             android:defaultValue="false"
             android:key="can_draw_overlays"
             android:summary="@string/can_draw_overlays_summary"
-            android:title="@string/can_draw_overlays" />
+            android:title="@string/can_draw_overlays"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/general">
+    <PreferenceCategory android:title="@string/general"
+        android:key="general">
         <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
         <SwitchPreference
             android:defaultValue="false"
-            android:key="auto_start"
-            android:title="@string/auto_start" />
+            android:key="start_at_boot"
+            android:title="@string/start_at_boot"/>
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="show_blocked_info"
+            android:title="@string/show_blocked_info"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

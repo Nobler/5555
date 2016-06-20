@@ -7,15 +7,16 @@
 
     <string name="start_service">Start service</string>
 
-    <string name="auto_start">Auto-start</string>
+    <string name="start_at_boot">Start at boot</string>
     <string name="general">General</string>
 
     <string name="can_draw_overlays_summary">In Android 6.0, you need to enable this permission to intercept screen touch event</string>
 
     <string name="toast_service_stop">Service stop</string>
     <string name="toast_occur_error">Operation failed</string>
-    <string name="blocked_view_info">Do not cover the top of the screen or\n press the <font color="#FF0000"><b>Volume +</b></font> and <font color="#FF0000"><b>Volume -</b></font> simultaneously</string>
+    <string name="blocked_view_info">Do not cover the top of the screen or\n press and hold <font color="#FF0000"><b> Volume + </b></font>and<font color="#FF0000"><b> Volume - </b></font> simultaneously</string>
     <string name="toast_service_start">Service start</string>
     <string name="permission_hint">Please enable the permission</string>
     <string name="jump_to">Go</string>
+    <string name="show_blocked_info">Show blocked info</string>
 </resources>

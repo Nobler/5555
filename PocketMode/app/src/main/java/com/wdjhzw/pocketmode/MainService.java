@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,10 @@ import android.widget.TextView;
  */
 public class MainService extends Service {
     public static final String ACTION_SHOW_BLOCKED_VIEW = "com.wdjhzw.pocketmode.SHOW_BLOCKED_VIEW";
+    public static final String ACTION_UPDATE_BLOCKED_VIEW = "com.wdjhzw.pocketmode.UPDATE_BLOCKED_VIEW";
     public static final String ACTION_HIDE_BLOCKED_VIEW = "com.wdjhzw.pocketmode.HIDE_BLOCKED_VIEW";
+
+    public static final String EXTRA_IS_BLOCKED_INFO_VISIBLE = "android.intent.extra.IS_BLOCKED_INFO_VISIBLE";
     public static final String TAG = "MainService";
     private int mRepeatCount;
     private SensorEventReceiver mReceiver;
@@ -63,13 +67,16 @@ public class MainService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
+        boolean isBlockedInfoVisible = intent.getBooleanExtra(EXTRA_IS_BLOCKED_INFO_VISIBLE, true);
         Log.e(TAG, "onStartCommand:" + action);
 
         // SensorEventReceiver use the action to call MainService's feature.
         if (action != null) {
             if (action.equals(ACTION_SHOW_BLOCKED_VIEW)) {
                 showBlockedView();
-            } else if (action.equals(ACTION_HIDE_BLOCKED_VIEW)) {
+            } else if (action.equals(ACTION_UPDATE_BLOCKED_VIEW)){
+                updateBlockedView(isBlockedInfoVisible);
+            }else if (action.equals(ACTION_HIDE_BLOCKED_VIEW)) {
                 hideBlockedView();
             }
         }
@@ -104,6 +111,9 @@ public class MainService extends Service {
                 .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_view, null);
 
         mTextView = (TextView) mBlockedView.findViewById(R.id.info);
+        mTextView.setVisibility(PreferenceManager.getDefaultSharedPreferences(MainService
+                .this).getBoolean(MainSettingsFragment.KEY_SHOW_BLOCKED_INFO, true) ? View
+                .VISIBLE : View.INVISIBLE);
 
         mProgressBar = (ProgressBar) mBlockedView.findViewById(R.id.progressBar);
         mBlockedView.setOnKeyStateChangeListener(new BlockedView.OnKeyStateChangeListener() {
@@ -141,7 +151,7 @@ public class MainService extends Service {
 //                            mBlockedView.startAnimation(AnimationUtils.loadAnimation(MainService
 //                                    .this, R.anim.fade_out));
                             mBlockedView.setBackgroundResource(android.R.color.transparent);
-                            mTextView.setVisibility(View.INVISIBLE);
+                            setTextViewVisibility(View.INVISIBLE);
                         }
 
                         return;
@@ -152,7 +162,7 @@ public class MainService extends Service {
                         isBlockedViewTransparent = false;
                         hideBlockedView();
                         mBlockedView.setBackgroundResource(R.drawable.bg_blocked_view);
-                        mTextView.setVisibility(View.VISIBLE);
+                        setTextViewVisibility(View.VISIBLE);
 
                         return;
                     }
@@ -163,10 +173,25 @@ public class MainService extends Service {
         });
     }
 
+    private void setTextViewVisibility(int visibility) {
+        if (!PreferenceManager.getDefaultSharedPreferences(MainService.this).getBoolean
+                (MainSettingsFragment.KEY_SHOW_BLOCKED_INFO, true)) {
+            mTextView.setVisibility(View.INVISIBLE);
+        } else {
+            mTextView.setVisibility(visibility);
+        }
+    }
+
     private void showBlockedView() {
         if (!mIsBlockedViewShown) {
             mWindowManager.addView(mBlockedView, mLayoutParams);
             mIsBlockedViewShown = true;
+        }
+    }
+
+    private void updateBlockedView(boolean isBlockedInfoVisible) {
+        if (mTextView != null) {
+            mTextView.setVisibility(isBlockedInfoVisible ? View.VISIBLE : View.INVISIBLE);
         }
     }
 

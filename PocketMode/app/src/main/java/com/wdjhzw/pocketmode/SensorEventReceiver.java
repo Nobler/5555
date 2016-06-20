@@ -68,7 +68,7 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
                 Log.e(TAG, "Sensor OFF");
 
                 Toast.makeText(mContext, "Please give my app this permission!", Toast
-                        .LENGTH_SHORT).show();
+                        .LENGTH_LONG).show();
                 return;
             }
 
