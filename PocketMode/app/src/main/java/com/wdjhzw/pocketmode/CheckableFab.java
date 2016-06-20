@@ -1,12 +1,9 @@
 package com.wdjhzw.pocketmode;
 
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
-import android.widget.RemoteViews;
 
 /**
  * Implementation of App Widget functionality.
@@ -34,6 +31,12 @@ public class CheckableFab extends FloatingActionButton {
     }
 
     @Override
+    public boolean isEnabled() {
+//        return super.isEnabled();
+        return mIsEnabled;
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
 //        super.setEnabled(enabled);
         mIsEnabled = enabled;
@@ -51,12 +54,6 @@ public class CheckableFab extends FloatingActionButton {
         }
 
         setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(colorId)));
-    }
-
-    @Override
-    public boolean isEnabled() {
-//        return super.isEnabled();
-        return mIsEnabled;
     }
 }
 

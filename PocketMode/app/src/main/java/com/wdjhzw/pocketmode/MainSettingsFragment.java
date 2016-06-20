@@ -1,26 +1,18 @@
 package com.wdjhzw.pocketmode;
 
 
-import android.app.ActivityManager;
-import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
-import android.widget.Toast;
-
-import java.util.List;
 
 public class MainSettingsFragment extends PreferenceFragment implements Preference
         .OnPreferenceChangeListener {
@@ -103,8 +95,8 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                 return false;
             }
         } else if (preference == mBootStart) {
-            mContext.getPackageManager().setComponentEnabledSetting(mBootReceiver, value ? PackageManager
-                    .COMPONENT_ENABLED_STATE_ENABLED : PackageManager
+            mContext.getPackageManager().setComponentEnabledSetting(mBootReceiver, value ?
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager
                     .COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
             Log.e(TAG, "" + mContext.getPackageManager().getComponentEnabledSetting(mBootReceiver));
         }

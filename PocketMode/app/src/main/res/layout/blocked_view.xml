@@ -11,6 +11,7 @@
         android:layout_alignParentTop="true"
         android:layout_margin="14dp"
         android:paddingTop="30dp"
+        android:textColor="@android:color/white"
         android:text="@string/blocked_view_info"
         android:textAlignment="center" />
 
