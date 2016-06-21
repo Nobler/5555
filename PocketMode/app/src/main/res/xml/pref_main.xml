@@ -13,8 +13,9 @@
             android:title="@string/can_draw_overlays"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/general"
-        android:key="general">
+    <PreferenceCategory
+        android:key="general"
+        android:title="@string/general">
         <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
         <SwitchPreference
             android:defaultValue="false"
@@ -25,6 +26,11 @@
             android:defaultValue="true"
             android:key="show_blocked_info"
             android:title="@string/show_blocked_info"/>
+
+        <Preference
+            android:dependency="show_blocked_info"
+            android:key="blocked_info_pos"
+            android:title="@string/blocked_info_pos"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

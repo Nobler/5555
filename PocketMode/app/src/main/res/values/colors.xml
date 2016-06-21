@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorBlockedInfo">#40FF0000</color>
     <color name="colorBlockedView">#80FF0000</color>
-    <color name="colorProgressBar">#FF0000</color>
+    <color name="colorProgressBar">#FFFF0000</color>
 </resources>

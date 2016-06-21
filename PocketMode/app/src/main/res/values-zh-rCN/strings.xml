@@ -12,11 +12,12 @@
 
     <string name="toast_service_start">服务启动</string>
     <string name="toast_occur_error">操作失败</string>
-    <string name="blocked_view_info">请勿遮挡屏幕顶部或\n同时长按<font color="#FF0000"><b> 音量 + </b></font>和<font color="#FF0000"><b> 音量 - </b></font></string>
+    <string name="blocked_view_info">请勿遮挡屏幕顶部或\n同时长按 音量 + 和 音量 -</string>
     <string name="start_at_boot">开机启动</string>
     <string name="can_draw_overlays">允许在其他应用的上层显示</string>
     <string name="toast_service_stop">服务停止</string>
     <string name="permission_hint">请打开相应的权限</string>
     <string name="jump_to">去设置</string>
     <string name="show_blocked_info">显示屏蔽信息</string>
+    <string name="blocked_info_pos">屏蔽信息位置</string>
 </resources>

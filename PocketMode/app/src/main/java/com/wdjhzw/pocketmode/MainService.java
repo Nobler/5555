@@ -110,7 +110,7 @@ public class MainService extends Service {
         mBlockedView = (BlockedView) ((LayoutInflater) getSystemService(Context
                 .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_view, null);
 
-        mTextView = (TextView) mBlockedView.findViewById(R.id.info);
+        mTextView = (TextView) mBlockedView.findViewById(R.id.blocked_info);
         mTextView.setVisibility(PreferenceManager.getDefaultSharedPreferences(MainService
                 .this).getBoolean(MainSettingsFragment.KEY_SHOW_BLOCKED_INFO, true) ? View
                 .VISIBLE : View.INVISIBLE);
