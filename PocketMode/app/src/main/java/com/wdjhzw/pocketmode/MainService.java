@@ -66,17 +66,17 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String action = intent.getAction();
-        boolean isBlockedInfoVisible = intent.getBooleanExtra(EXTRA_IS_BLOCKED_INFO_VISIBLE, true);
-        Log.e(TAG, "onStartCommand:" + action);
+        Log.e(TAG, "onStartCommand:");
 
-        // SensorEventReceiver use the action to call MainService's feature.
-        if (action != null) {
+        if (intent != null && intent.getAction() != null) {
+            String action = intent.getAction();
+
+            // SensorEventReceiver use the action to call MainService's feature.
             if (action.equals(ACTION_SHOW_BLOCKED_VIEW)) {
                 showBlockedView();
-            } else if (action.equals(ACTION_UPDATE_BLOCKED_VIEW)){
-                updateBlockedView(isBlockedInfoVisible);
-            }else if (action.equals(ACTION_HIDE_BLOCKED_VIEW)) {
+            } else if (action.equals(ACTION_UPDATE_BLOCKED_VIEW)) {
+                updateBlockedView(intent.getBooleanExtra(EXTRA_IS_BLOCKED_INFO_VISIBLE, true));
+            } else if (action.equals(ACTION_HIDE_BLOCKED_VIEW)) {
                 hideBlockedView();
             }
         }

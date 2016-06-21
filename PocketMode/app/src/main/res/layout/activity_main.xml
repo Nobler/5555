@@ -6,11 +6,11 @@
     android:fitsSystemWindows="true"
     tools:context="com.wdjhzw.pocketmode.MainActivity">
 
-    <fragment
+    <LinearLayout
         android:id="@+id/main"
-        android:name="com.wdjhzw.pocketmode.MainSettingsFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"/>
 
     <com.wdjhzw.pocketmode.CheckableFab
         android:id="@+id/fab"

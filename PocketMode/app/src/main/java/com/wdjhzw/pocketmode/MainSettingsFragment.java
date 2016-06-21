@@ -1,6 +1,8 @@
 package com.wdjhzw.pocketmode;
 
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +30,21 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     private SwitchPreference mBootStart;
     private SwitchPreference mShowBlockedInfo;
 
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            mContext = (MainActivity) activity;
+        }
+    }
+
+    /*
+     * onAttach(Context) is not called on pre API 23 versions of Android and onAttach(Activity) is
+     * deprecated
+     */
+    @TargetApi(23)
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -36,8 +53,8 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         addPreferencesFromResource(R.xml.pref_main);
 
@@ -82,6 +99,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         mContext.setFabEnabled(true);
     }
 
+    @SuppressWarnings("all")
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         Log.e(TAG, "onPreferenceChange:" + preference.toString() + ":" + newValue.toString());

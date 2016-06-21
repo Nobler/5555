@@ -1,6 +1,8 @@
 package com.wdjhzw.pocketmode;
 
 import android.app.ActivityManager;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loadFragment();
 
         mFab = (CheckableFab) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +71,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void loadFragment() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main, new MainSettingsFragment());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     @Override
