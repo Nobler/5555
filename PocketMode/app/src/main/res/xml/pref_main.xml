@@ -27,10 +27,12 @@
             android:key="show_blocked_info"
             android:title="@string/show_blocked_info"/>
 
-        <Preference
+        <com.wdjhzw.pocketmode.CoordinatePickerPreference
             android:dependency="show_blocked_info"
             android:key="blocked_info_pos"
+            android:layout="@layout/preference_material"
             android:title="@string/blocked_info_pos"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

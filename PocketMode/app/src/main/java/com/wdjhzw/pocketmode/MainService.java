@@ -26,7 +26,7 @@ public class MainService extends Service {
     public static final String ACTION_UPDATE_BLOCKED_VIEW = "com.wdjhzw.pocketmode.UPDATE_BLOCKED_VIEW";
     public static final String ACTION_HIDE_BLOCKED_VIEW = "com.wdjhzw.pocketmode.HIDE_BLOCKED_VIEW";
 
-    public static final String EXTRA_IS_BLOCKED_INFO_VISIBLE = "android.intent.extra.IS_BLOCKED_INFO_VISIBLE";
+    public static final String EXTRA_IS_BLOCKED_INFO_VISIBLE = "com.wdjhzw.pocketmode.extra.IS_BLOCKED_INFO_VISIBLE";
     public static final String TAG = "MainService";
     private int mRepeatCount;
     private SensorEventReceiver mReceiver;
@@ -148,8 +148,6 @@ public class MainService extends Service {
                         if (repeatCount > mRepeatCount) {
                             Log.e(TAG, "repeat count");
                             isBlockedViewTransparent = true;
-//                            mBlockedView.startAnimation(AnimationUtils.loadAnimation(MainService
-//                                    .this, R.anim.fade_out));
                             mBlockedView.setBackgroundResource(android.R.color.transparent);
                             setTextViewVisibility(View.INVISIBLE);
                         }

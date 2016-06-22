@@ -20,4 +20,5 @@
     <string name="jump_to">去设置</string>
     <string name="show_blocked_info">显示屏蔽信息</string>
     <string name="blocked_info_pos">屏蔽信息位置</string>
+    <string name="positive">确定</string>
 </resources>

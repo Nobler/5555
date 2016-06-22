@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadFragment() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main, new MainSettingsFragment());
+        fragmentTransaction.replace(R.id.settings, new MainSettingsFragment());
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
@@ -92,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
             stopService(new Intent(this, MainService.class));
         }
         mFab.setEnabled(enabled);
+    }
+
+    public boolean isServiceStarted() {
+        return mIsServiceStart;
     }
 
     /**

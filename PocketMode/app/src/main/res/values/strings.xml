@@ -20,4 +20,5 @@
     <string name="jump_to">Go</string>
     <string name="show_blocked_info">Show blocked info</string>
     <string name="blocked_info_pos">Blocked info position</string>
+    <string name="positive">OK</string>
 </resources>
