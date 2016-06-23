@@ -27,32 +27,10 @@
             android:textAppearance="?attr/textAppearanceListItem"/>
     </RelativeLayout>
 
-    <LinearLayout
+    <com.wdjhzw.pocketmode.SeekBarWithHint
+        android:id="@+id/seek_bar_with_hint"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
-
-        <SeekBar
-            android:id="@+id/seek_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-        <LinearLayout
-            android:id="@+id/widget_frame"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="end|center_vertical"
-            android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingStart="16dp">
-
-            <TextView
-                android:id="@+id/coordinate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,8 +26,9 @@ public class MainService extends Service {
     public static final String ACTION_SHOW_BLOCKED_VIEW = "com.wdjhzw.pocketmode.SHOW_BLOCKED_VIEW";
     public static final String ACTION_UPDATE_BLOCKED_VIEW = "com.wdjhzw.pocketmode.UPDATE_BLOCKED_VIEW";
     public static final String ACTION_HIDE_BLOCKED_VIEW = "com.wdjhzw.pocketmode.HIDE_BLOCKED_VIEW";
-
+    public static final String ACTION_SET_BLOCKED_INFO_COORDINATE = "com.wdjhzw.pocketmode.SET_BLOCKED_INFO_COORDINATE";
     public static final String EXTRA_IS_BLOCKED_INFO_VISIBLE = "com.wdjhzw.pocketmode.extra.IS_BLOCKED_INFO_VISIBLE";
+    public static final String EXTRA_BLOCKED_INFO_COORDINAT = "com.wdjhzw.pocketmode.extra.BLOCKED_INFO_COORDINAT";
     public static final String TAG = "MainService";
     private int mRepeatCount;
     private SensorEventReceiver mReceiver;
@@ -36,6 +38,9 @@ public class MainService extends Service {
     private boolean mIsBlockedViewShown;
     private ProgressBar mProgressBar;
     private TextView mTextView;
+    private int mBlockedInfoHeight;
+    private int mBlockedInfoCoordinate;
+    private int mScreenHeight;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -62,6 +67,12 @@ public class MainService extends Service {
         initBlockedViewLayoutParams();
         inflateBlockedView();
         mIsBlockedViewShown = false;
+
+        mBlockedInfoCoordinate = PreferenceManager.getDefaultSharedPreferences(MainService
+                .this).getInt(MainSettingsFragment.KEY_BLOCKED_INFO_POS,
+                CoordinatePickerPreference.DEFAULT_VALUE);
+        mScreenHeight = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getHeight();
     }
 
     @Override
@@ -72,12 +83,21 @@ public class MainService extends Service {
             String action = intent.getAction();
 
             // SensorEventReceiver use the action to call MainService's feature.
-            if (action.equals(ACTION_SHOW_BLOCKED_VIEW)) {
-                showBlockedView();
-            } else if (action.equals(ACTION_UPDATE_BLOCKED_VIEW)) {
-                updateBlockedView(intent.getBooleanExtra(EXTRA_IS_BLOCKED_INFO_VISIBLE, true));
-            } else if (action.equals(ACTION_HIDE_BLOCKED_VIEW)) {
-                hideBlockedView();
+            switch (action) {
+                case ACTION_SHOW_BLOCKED_VIEW:
+                    showBlockedView();
+                    break;
+                case ACTION_UPDATE_BLOCKED_VIEW:
+                    setBlockedInfoVisibility(intent.getBooleanExtra
+                            (EXTRA_IS_BLOCKED_INFO_VISIBLE, true));
+                    break;
+                case ACTION_SET_BLOCKED_INFO_COORDINATE:
+                    setBlockedInfoCoordinate(intent.getIntExtra(EXTRA_BLOCKED_INFO_COORDINAT,
+                            CoordinatePickerPreference.DEFAULT_VALUE));
+                    break;
+                case ACTION_HIDE_BLOCKED_VIEW:
+                    hideBlockedView();
+                    break;
             }
         }
 
@@ -101,7 +121,7 @@ public class MainService extends Service {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mLayoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-        } else {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mLayoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
         }
     }
@@ -111,9 +131,24 @@ public class MainService extends Service {
                 .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_view, null);
 
         mTextView = (TextView) mBlockedView.findViewById(R.id.blocked_info);
-        mTextView.setVisibility(PreferenceManager.getDefaultSharedPreferences(MainService
-                .this).getBoolean(MainSettingsFragment.KEY_SHOW_BLOCKED_INFO, true) ? View
-                .VISIBLE : View.INVISIBLE);
+        if (PreferenceManager.getDefaultSharedPreferences(MainService
+                .this).getBoolean(MainSettingsFragment.KEY_SHOW_BLOCKED_INFO, true)) {
+            mTextView.setVisibility(View.VISIBLE);
+
+            ViewTreeObserver vto = mTextView.getViewTreeObserver();
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mTextView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                    mBlockedInfoHeight = mTextView.getHeight();
+                    mTextView.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 *
+                            mBlockedInfoCoordinate);
+                }
+            });
+        } else {
+            mTextView.setVisibility(View.INVISIBLE);
+        }
 
         mProgressBar = (ProgressBar) mBlockedView.findViewById(R.id.progressBar);
         mBlockedView.setOnKeyStateChangeListener(new BlockedView.OnKeyStateChangeListener() {
@@ -187,9 +222,15 @@ public class MainService extends Service {
         }
     }
 
-    private void updateBlockedView(boolean isBlockedInfoVisible) {
+    private void setBlockedInfoVisibility(boolean isBlockedInfoVisible) {
         if (mTextView != null) {
             mTextView.setVisibility(isBlockedInfoVisible ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+
+    private void setBlockedInfoCoordinate(int coordinate) {
+        if (mTextView != null) {
+            mTextView.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * coordinate);
         }
     }
 

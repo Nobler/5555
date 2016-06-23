@@ -28,6 +28,7 @@
             android:title="@string/show_blocked_info"/>
 
         <com.wdjhzw.pocketmode.CoordinatePickerPreference
+            android:defaultValue="20"
             android:dependency="show_blocked_info"
             android:key="blocked_info_pos"
             android:layout="@layout/preference_material"

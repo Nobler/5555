@@ -6,20 +6,24 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 
 public class MainSettingsFragment extends PreferenceFragment implements Preference
-        .OnPreferenceChangeListener {
+        .OnPreferenceChangeListener, CoordinatePickerPreference
+        .OnSeekBarTrackingStateChangedListener {
     public static final String KEY_CAN_DRAW_OVERLAYS = "can_draw_overlays";
     public static final String KEY_START_AT_BOOT = "start_at_boot";
     public static final String KEY_SHOW_BLOCKED_INFO = "show_blocked_info";
@@ -32,7 +36,12 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     private SwitchPreference mDrawOverlays;
     private SwitchPreference mBootStart;
     private SwitchPreference mShowBlockedInfo;
-    private Preference mBlockedInfoPos;
+    private CoordinatePickerPreference mBlockedInfoPos;
+    private WindowManager.LayoutParams mLayoutParams;
+    private View mBlockedInfoPreview;
+    private View mBlockedInfo;
+    private int mBlockedInfoHeight;
+    private int mScreenHeight;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -66,8 +75,9 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         mBootStart.setOnPreferenceChangeListener(this);
         mShowBlockedInfo = (SwitchPreference) findPreference(KEY_SHOW_BLOCKED_INFO);
         mShowBlockedInfo.setOnPreferenceChangeListener(this);
-//        mBlockedInfoPos = findPreference(KEY_BLOCKED_INFO_POS);
-//        mBlockedInfoPos.setOnPreferenceChangeListener(this);
+        mBlockedInfoPos = (CoordinatePickerPreference) findPreference(KEY_BLOCKED_INFO_POS);
+        mBlockedInfoPos.setOnPreferenceChangeListener(this);
+        mBlockedInfoPos.setOnSeekBarTrackingStateChangedListener(this);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             // Permission "Draw over other apps" is added in Android M.
@@ -80,6 +90,9 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         }
 
         mBootReceiver = new ComponentName(mContext, MainService.BootReceiver.class);
+
+        mScreenHeight = ((WindowManager) mContext.getSystemService(Context
+                .WINDOW_SERVICE)).getDefaultDisplay().getHeight();
     }
 
     @Override
@@ -110,10 +123,8 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         Log.e(TAG, "onPreferenceChange:" + preference.toString() + ":" + newValue.toString());
 
-        boolean value = (Boolean) newValue;
-
         if (preference == mDrawOverlays) {
-            if (value != mCanDrawOverlays) {
+            if ((Boolean) newValue != mCanDrawOverlays) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse
                         ("package:" + mContext.getPackageName()));
                 startActivity(intent);
@@ -121,24 +132,24 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                 return false;
             }
         } else if (preference == mBootStart) {
-            mContext.getPackageManager().setComponentEnabledSetting(mBootReceiver, value ?
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager
+            mContext.getPackageManager().setComponentEnabledSetting(mBootReceiver, (Boolean)
+                    newValue ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager
                     .COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
             Log.e(TAG, "" + mContext.getPackageManager().getComponentEnabledSetting(mBootReceiver));
         } else if (preference == mShowBlockedInfo) {
-            // We need an Editor object to make preference changes.
-            // All objects are from android.context.Context
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(KEY_SHOW_BLOCKED_INFO, value);
-            // Commit the edits!
-            editor.commit();
-
             if (mContext.isServiceStarted()) {
                 mContext.startService(new Intent(mContext, MainService.class).setAction
                         (MainService.ACTION_UPDATE_BLOCKED_VIEW).putExtra(MainService
-                        .EXTRA_IS_BLOCKED_INFO_VISIBLE, value));
+                        .EXTRA_IS_BLOCKED_INFO_VISIBLE, (Boolean) newValue));
             }
+        } else if (preference == mBlockedInfoPos) {
+            if (mContext.isServiceStarted()) {
+                mContext.startService(new Intent(mContext, MainService.class).setAction
+                        (MainService.ACTION_SET_BLOCKED_INFO_COORDINATE).putExtra(MainService
+                        .EXTRA_BLOCKED_INFO_COORDINAT, (Integer) newValue));
+            }
+
+            mBlockedInfo.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * (int) newValue);
         }
 
         return true;
@@ -149,5 +160,39 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         // onPreferenceChanage() is manually called, the check state should be
         // also set manually.
         preference.setChecked(newValue);
+    }
+
+    @Override
+    public void onStartTrackingTouch() {
+        Log.e(TAG, "onStartTrackingTouch");
+        mLayoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.TYPE_PHONE,
+                0, PixelFormat.TRANSLUCENT);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mLayoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mLayoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        }
+        mBlockedInfoPreview = ((LayoutInflater) mContext.getSystemService(Context
+                .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_info_preview, null);
+        mBlockedInfo = mBlockedInfoPreview.findViewById(R.id.blocked_info);
+        ViewTreeObserver vto = mBlockedInfo.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mBlockedInfo.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                mBlockedInfoHeight = mBlockedInfo.getHeight();
+
+            }
+        });
+        mContext.getWindowManager().addView(mBlockedInfoPreview, mLayoutParams);
+    }
+
+    @Override
+    public void onStopTrackingTouch(int progress) {
+        Log.e(TAG, "onStopTrackingTouch");
+        mContext.getWindowManager().removeView(mBlockedInfoPreview);
     }
 }
