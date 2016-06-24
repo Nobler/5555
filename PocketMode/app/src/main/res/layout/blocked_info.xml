@@ -8,6 +8,7 @@
     android:background="@color/colorBlockedInfo"
     android:gravity="center"
     android:padding="4dp"
+    android:textSize="14sp"
     android:text="@string/blocked_view_info"
     android:textColor="@android:color/white"
     tools:showIn="@layout/blocked_view"/>

@@ -174,19 +174,20 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mLayoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
         }
+
         mBlockedInfoPreview = ((LayoutInflater) mContext.getSystemService(Context
                 .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_info_preview, null);
         mBlockedInfo = mBlockedInfoPreview.findViewById(R.id.blocked_info);
+
         ViewTreeObserver vto = mBlockedInfo.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 mBlockedInfo.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-
                 mBlockedInfoHeight = mBlockedInfo.getHeight();
-
             }
         });
+
         mContext.getWindowManager().addView(mBlockedInfoPreview, mLayoutParams);
     }
 

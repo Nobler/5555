@@ -83,8 +83,6 @@ public class CoordinatePickerPreference extends Preference {
         mListener = l;
     }
 
-
-
     interface OnSeekBarTrackingStateChangedListener {
         void onStartTrackingTouch();
         void onStopTrackingTouch(int progress);
