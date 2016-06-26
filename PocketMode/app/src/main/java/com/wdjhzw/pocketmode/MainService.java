@@ -241,7 +241,7 @@ public class MainService extends Service {
         }
     }
 
-    public class BootReceiver extends BroadcastReceiver {
+    public static class BootReceiver extends BroadcastReceiver {
         public BootReceiver() {
         }
 
