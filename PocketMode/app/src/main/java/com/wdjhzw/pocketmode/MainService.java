@@ -141,7 +141,10 @@ public class MainService extends Service {
                 public void onGlobalLayout() {
                     mTextView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
+                    // The height of blocked info can noly be got after its layout is initialized.
                     mBlockedInfoHeight = mTextView.getHeight();
+                    // The first time blocked info being shown, its Y coordinate should be set
+                    // according to Preference.
                     mTextView.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 *
                             mBlockedInfoCoordinate);
                 }
@@ -229,8 +232,12 @@ public class MainService extends Service {
     }
 
     private void setBlockedInfoCoordinate(int coordinate) {
+        // If the preference of Y coordinate is changed before the blocked info is shown in first
+        // time, the value of mBlockedInfoCoordinate should be updated as well.
+        mBlockedInfoCoordinate = coordinate;
+
         if (mTextView != null) {
-            mTextView.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * coordinate);
+            mTextView.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * mBlockedInfoCoordinate);
         }
     }
 

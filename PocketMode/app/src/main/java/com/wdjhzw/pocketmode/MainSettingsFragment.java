@@ -42,6 +42,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     private View mBlockedInfo;
     private int mBlockedInfoHeight;
     private int mScreenHeight;
+    private int mBlockedInfoCoordinate;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -143,13 +144,8 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                         .EXTRA_IS_BLOCKED_INFO_VISIBLE, (Boolean) newValue));
             }
         } else if (preference == mBlockedInfoPos) {
-            if (mContext.isServiceStarted()) {
-                mContext.startService(new Intent(mContext, MainService.class).setAction
-                        (MainService.ACTION_SET_BLOCKED_INFO_COORDINATE).putExtra(MainService
-                        .EXTRA_BLOCKED_INFO_COORDINAT, (Integer) newValue));
-            }
-
-            mBlockedInfo.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * (int) newValue);
+            mBlockedInfoCoordinate = (int) newValue;
+            mBlockedInfo.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * mBlockedInfoCoordinate);
         }
 
         return true;
@@ -195,5 +191,10 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     public void onStopTrackingTouch(int progress) {
         Log.e(TAG, "onStopTrackingTouch");
         mContext.getWindowManager().removeView(mBlockedInfoPreview);
+        if (mContext.isServiceStarted()) {
+            mContext.startService(new Intent(mContext, MainService.class).setAction
+                    (MainService.ACTION_SET_BLOCKED_INFO_COORDINATE).putExtra(MainService
+                    .EXTRA_BLOCKED_INFO_COORDINAT, mBlockedInfoCoordinate));
+        }
     }
 }
