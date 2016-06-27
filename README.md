@@ -15,9 +15,13 @@ There are four project folders :
  - Main service running state indication
 
 Android 5.0
+
 ![Android 5.0](PocketMode/Screenshots/android_5.0.png)
+
 Android 6.0
+
 ![Android 6.0](PocketMode/Screenshots/android_6.0.png)
 
 Operation demo
+
 [![operation demo](http://img.youtube.com/vi/UX4i1r5sp0o/0.jpg)](http://www.youtube.com/watch?v=UX4i1r5sp0o)
