@@ -37,7 +37,7 @@ public class MainService extends Service {
     private WindowManager mWindowManager;
     private boolean mIsBlockedViewShown;
     private ProgressBar mProgressBar;
-    private TextView mTextView;
+    private TextView mBlockedInfo;
     private int mBlockedInfoHeight;
     private int mBlockedInfoCoordinate;
     private int mScreenHeight;
@@ -70,7 +70,7 @@ public class MainService extends Service {
 
         mBlockedInfoCoordinate = PreferenceManager.getDefaultSharedPreferences(MainService
                 .this).getInt(MainSettingsFragment.KEY_BLOCKED_INFO_POS,
-                CoordinatePickerPreference.DEFAULT_VALUE);
+                SeekBarPreference.DEFAULT_VALUE);
         mScreenHeight = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay().getHeight();
     }
@@ -93,7 +93,7 @@ public class MainService extends Service {
                     break;
                 case ACTION_SET_BLOCKED_INFO_COORDINATE:
                     setBlockedInfoCoordinate(intent.getIntExtra(EXTRA_BLOCKED_INFO_COORDINAT,
-                            CoordinatePickerPreference.DEFAULT_VALUE));
+                            SeekBarPreference.DEFAULT_VALUE));
                     break;
                 case ACTION_HIDE_BLOCKED_VIEW:
                     hideBlockedView();
@@ -130,27 +130,27 @@ public class MainService extends Service {
         mBlockedView = (BlockedView) ((LayoutInflater) getSystemService(Context
                 .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_view, null);
 
-        mTextView = (TextView) mBlockedView.findViewById(R.id.blocked_info);
+        mBlockedInfo = (TextView) mBlockedView.findViewById(R.id.blocked_info);
         if (PreferenceManager.getDefaultSharedPreferences(MainService
                 .this).getBoolean(MainSettingsFragment.KEY_SHOW_BLOCKED_INFO, true)) {
-            mTextView.setVisibility(View.VISIBLE);
+            mBlockedInfo.setVisibility(View.VISIBLE);
 
-            ViewTreeObserver vto = mTextView.getViewTreeObserver();
+            ViewTreeObserver vto = mBlockedInfo.getViewTreeObserver();
             vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    mTextView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    mBlockedInfo.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
                     // The height of blocked info can noly be got after its layout is initialized.
-                    mBlockedInfoHeight = mTextView.getHeight();
+                    mBlockedInfoHeight = mBlockedInfo.getHeight();
                     // The first time blocked info being shown, its Y coordinate should be set
                     // according to Preference.
-                    mTextView.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 *
+                    mBlockedInfo.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 *
                             mBlockedInfoCoordinate);
                 }
             });
         } else {
-            mTextView.setVisibility(View.INVISIBLE);
+            mBlockedInfo.setVisibility(View.INVISIBLE);
         }
 
         mProgressBar = (ProgressBar) mBlockedView.findViewById(R.id.progressBar);
@@ -212,9 +212,9 @@ public class MainService extends Service {
     private void setTextViewVisibility(int visibility) {
         if (!PreferenceManager.getDefaultSharedPreferences(MainService.this).getBoolean
                 (MainSettingsFragment.KEY_SHOW_BLOCKED_INFO, true)) {
-            mTextView.setVisibility(View.INVISIBLE);
+            mBlockedInfo.setVisibility(View.INVISIBLE);
         } else {
-            mTextView.setVisibility(visibility);
+            mBlockedInfo.setVisibility(visibility);
         }
     }
 
@@ -226,8 +226,8 @@ public class MainService extends Service {
     }
 
     private void setBlockedInfoVisibility(boolean isBlockedInfoVisible) {
-        if (mTextView != null) {
-            mTextView.setVisibility(isBlockedInfoVisible ? View.VISIBLE : View.INVISIBLE);
+        if (mBlockedInfo != null) {
+            mBlockedInfo.setVisibility(isBlockedInfoVisible ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
@@ -236,8 +236,8 @@ public class MainService extends Service {
         // time, the value of mBlockedInfoCoordinate should be updated as well.
         mBlockedInfoCoordinate = coordinate;
 
-        if (mTextView != null) {
-            mTextView.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * mBlockedInfoCoordinate);
+        if (mBlockedInfo != null) {
+            mBlockedInfo.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * mBlockedInfoCoordinate);
         }
     }
 

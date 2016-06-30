@@ -13,7 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * Created by houzhiwei on 16/5/23.
+ * Handle ProximitySensor value changed events.
  */
 public class SensorEventReceiver extends BroadcastReceiver implements SensorEventListener {
     private static final String TAG = "SensorEventReceiver";

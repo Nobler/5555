@@ -7,7 +7,7 @@ import android.view.KeyEvent;
 import android.widget.RelativeLayout;
 
 /**
- * TODO: document your custom view class.
+ * View to block all touch events.
  */
 public class BlockedView extends RelativeLayout {
     public static final String TAG = "BlockedView";

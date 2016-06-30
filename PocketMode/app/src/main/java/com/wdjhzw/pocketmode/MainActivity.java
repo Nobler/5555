@@ -1,11 +1,13 @@
 package com.wdjhzw.pocketmode;
 
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!mFab.isEnabled()) {
                         Snackbar.make(view, R.string.permission_hint, Snackbar.LENGTH_LONG)
                                 .setAction(R.string.jump_to, new View.OnClickListener() {
+                                    @TargetApi(Build.VERSION_CODES.M)
                                     @Override
                                     public void onClick(View v) {
                                         Intent intent = new Intent(Settings

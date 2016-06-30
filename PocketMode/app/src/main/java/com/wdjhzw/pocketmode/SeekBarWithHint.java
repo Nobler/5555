@@ -8,7 +8,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
- * Created by houzhiwei on 16/6/23.
+ * SeekBar with a hint view to show its current value.
  */
 public class SeekBarWithHint extends LinearLayout {
     private OnSeekBarChangeListener mListener;
@@ -25,7 +25,7 @@ public class SeekBarWithHint extends LinearLayout {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                tv.setText(progress + "%");
+                tv.setText(String.format("%d%%", progress));
                 this.progress = progress;
                 if (mListener != null) {
                     mListener.onProgressChanged(this.progress);

@@ -3,6 +3,7 @@ package com.wdjhzw.pocketmode;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.animation.AnimationUtils;
 
@@ -51,7 +52,7 @@ public class CheckableFab extends FloatingActionButton {
         mIsEnabled = enabled;
 
         int colorId = enabled ? R.color.colorAccent : android.R.color.darker_gray;
-        setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(colorId)));
+        setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, colorId)));
 
         if (!enabled && mIsChecked) {
             setImageResource(android.R.drawable.ic_media_play);

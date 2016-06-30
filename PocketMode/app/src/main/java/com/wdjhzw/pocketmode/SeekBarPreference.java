@@ -8,23 +8,24 @@ import android.util.Log;
 import android.view.View;
 
 /**
- * Created by houzhiwei on 16/6/22.
+ * A {@link Preference} that provides a SeekBar to pick value.
+ *
  */
-public class CoordinatePickerPreference extends Preference {
+public class SeekBarPreference extends Preference {
     public static final String TAG = "CoordinatePicker";
     public static final int DEFAULT_VALUE = 20;
     private int mCurrentValue;
     private OnSeekBarTrackingStateChangedListener mListener;
 
-    public CoordinatePickerPreference(Context context) {
+    public SeekBarPreference(Context context) {
         this(context, null);
     }
 
-    public CoordinatePickerPreference(Context context, AttributeSet attrs) {
+    public SeekBarPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CoordinatePickerPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SeekBarPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

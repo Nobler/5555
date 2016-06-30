@@ -22,7 +22,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
 public class MainSettingsFragment extends PreferenceFragment implements Preference
-        .OnPreferenceChangeListener, CoordinatePickerPreference
+        .OnPreferenceChangeListener, SeekBarPreference
         .OnSeekBarTrackingStateChangedListener {
     public static final String KEY_CAN_DRAW_OVERLAYS = "can_draw_overlays";
     public static final String KEY_START_AT_BOOT = "start_at_boot";
@@ -36,8 +36,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     private SwitchPreference mDrawOverlays;
     private SwitchPreference mBootStart;
     private SwitchPreference mShowBlockedInfo;
-    private CoordinatePickerPreference mBlockedInfoPos;
-    private WindowManager.LayoutParams mLayoutParams;
+    private SeekBarPreference mBlockedInfoPos;
     private View mBlockedInfoPreview;
     private View mBlockedInfo;
     private int mBlockedInfoHeight;
@@ -76,7 +75,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         mBootStart.setOnPreferenceChangeListener(this);
         mShowBlockedInfo = (SwitchPreference) findPreference(KEY_SHOW_BLOCKED_INFO);
         mShowBlockedInfo.setOnPreferenceChangeListener(this);
-        mBlockedInfoPos = (CoordinatePickerPreference) findPreference(KEY_BLOCKED_INFO_POS);
+        mBlockedInfoPos = (SeekBarPreference) findPreference(KEY_BLOCKED_INFO_POS);
         mBlockedInfoPos.setOnPreferenceChangeListener(this);
         mBlockedInfoPos.setOnSeekBarTrackingStateChangedListener(this);
 
@@ -161,14 +160,14 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     @Override
     public void onStartTrackingTouch() {
         Log.e(TAG, "onStartTrackingTouch");
-        mLayoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.TYPE_PHONE,
-                0, PixelFormat.TRANSLUCENT);
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager
+                .LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_PHONE, 0, PixelFormat.TRANSLUCENT);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mLayoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+            layoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mLayoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+            layoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
         }
 
         mBlockedInfoPreview = ((LayoutInflater) mContext.getSystemService(Context
@@ -184,7 +183,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             }
         });
 
-        mContext.getWindowManager().addView(mBlockedInfoPreview, mLayoutParams);
+        mContext.getWindowManager().addView(mBlockedInfoPreview, layoutParams);
     }
 
     @Override
