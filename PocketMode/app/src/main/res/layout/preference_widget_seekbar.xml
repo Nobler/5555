@@ -26,10 +26,9 @@
             android:textAppearance="?attr/textAppearanceListItem"/>
     </RelativeLayout>
 
-    <com.wdjhzw.pocketmode.SeekBarWithHint
+    <com.wdjhzw.pocketmode.widget.SeekBarWithHint
         android:id="@+id/seek_bar_with_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
 
 </LinearLayout>

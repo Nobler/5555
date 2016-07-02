@@ -1,4 +1,4 @@
-package com.wdjhzw.pocketmode;
+package com.wdjhzw.pocketmode.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -49,18 +49,21 @@ public class BlockedView extends RelativeLayout {
         }
 
         if (mIsVolumeDownKeyDown && mIsVolumeUpKeyDown) {
-            Log.e(TAG, "key down");
+            Log.e(TAG, "double volume key down");
+            //noinspection StatementWithEmptyBody
             if (mLastRepeatCount == 0 && repeatCount == 0 && keyCode != mLastKeyCode) {
                 mKeyState = KeyState.STATE_DOUBLE_KEY_DOWN_SIMULTANEOUSLY;
-                Log.e(TAG, "STATE_DOUBLE_KEY_DOWN_SIMULTANEOUSLY");
+            } else {
+                // In that case, double keys are in last state,
+                // STATE_DOUBLE_KEY_DOWN_SIMULTANEOUSLY or STATE_OTHERS.
             }
         } else if (!mIsVolumeDownKeyDown && !mIsVolumeUpKeyDown && keyCode != mLastKeyCode) {
             mKeyState = KeyState.STATE_DOUBLE_KEY_UP;
-            Log.e(TAG, "STATE_DOUBLE_KEY_UP");
         } else {
             mKeyState = KeyState.STATE_OTHERS;
         }
 
+        Log.e(TAG, "key state:" + mKeyState);
         mListener.onKeyStateChange(mKeyState, repeatCount);
 
         mLastRepeatCount = repeatCount;
@@ -74,14 +77,13 @@ public class BlockedView extends RelativeLayout {
     }
 
     /**
-     * Interface definition for a callback to be invoked when key state change
-     * time.
+     * Interface definition for a callback to be invoked when key state change time.
      */
     public interface OnKeyStateChangeListener {
         /**
          * Called when double volume key state change
          *
-         * @param keyState    Whether the double volume key are down in same time.
+         * @param keyState    Key state of volume down key and volume up key.
          * @param repeatCount The repeat count double volume key are down in same.
          */
         void onKeyStateChange(int keyState, int repeatCount);

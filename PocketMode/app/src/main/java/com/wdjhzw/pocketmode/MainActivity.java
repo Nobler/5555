@@ -2,7 +2,6 @@ package com.wdjhzw.pocketmode;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.wdjhzw.pocketmode.widget.CheckableFab;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String MAIN_SERVICE = "com.wdjhzw.pocketmode.MainService";
 
     private CheckableFab mFab;
-    private boolean mIsServiceStart;
+    private boolean mIsServiceRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +57,18 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, MainService.class);
 
                     boolean pass;
-                    if (mIsServiceStart) {
+                    if (mIsServiceRunning) {
                         pass = MainActivity.this.stopService(intent);
                     } else {
                         pass = MainActivity.this.startService(intent) != null;
                     }
 
                     if (pass) {
-                        mIsServiceStart = !mIsServiceStart;
-                        mFab.setChecked(mIsServiceStart);
+                        mIsServiceRunning = !mIsServiceRunning;
+                        mFab.setChecked(mIsServiceRunning);
                     }
 
-                    Toast.makeText(MainActivity.this, getString(pass ? (mIsServiceStart ? R
+                    Toast.makeText(MainActivity.this, getString(pass ? (mIsServiceRunning ? R
                             .string.toast_service_start : R.string.toast_service_stop) : R.string
                             .toast_occur_error), Toast.LENGTH_SHORT).show();
                 }
@@ -76,8 +77,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadFragment() {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.settings, new MainSettingsFragment());
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
@@ -86,19 +86,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mIsServiceStart = isServiceRunning(MAIN_SERVICE);
-        mFab.setChecked(mIsServiceStart);
+        mIsServiceRunning = isServiceRunning(MAIN_SERVICE);
+        mFab.setChecked(mIsServiceRunning);
     }
 
     public void setFabEnabled(boolean enabled) {
-        if (!enabled && mIsServiceStart) {
+        if (!enabled && mIsServiceRunning) {
             stopService(new Intent(this, MainService.class));
         }
         mFab.setEnabled(enabled);
     }
 
-    public boolean isServiceStarted() {
-        return mIsServiceStart;
+    public boolean isServiceRunning() {
+        return mIsServiceRunning;
     }
 
     /**

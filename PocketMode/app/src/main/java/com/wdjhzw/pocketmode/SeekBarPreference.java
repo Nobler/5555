@@ -7,12 +7,14 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.wdjhzw.pocketmode.widget.SeekBarWithHint;
+
 /**
  * A {@link Preference} that provides a SeekBar to pick value.
  *
  */
 public class SeekBarPreference extends Preference {
-    public static final String TAG = "CoordinatePicker";
+    public static final String TAG = "SeekBarPreference";
     public static final int DEFAULT_VALUE = 20;
     private int mCurrentValue;
     private OnSeekBarTrackingStateChangedListener mListener;
@@ -70,7 +72,6 @@ public class SeekBarPreference extends Preference {
 
             @Override
             public void onStopTrackingTouch(int progress) {
-                Log.e(TAG, "" + progress);
                 mCurrentValue = progress;
                 persistInt(mCurrentValue);
                 if (mListener != null) {
@@ -84,7 +85,10 @@ public class SeekBarPreference extends Preference {
         mListener = l;
     }
 
-    interface OnSeekBarTrackingStateChangedListener {
+    /**
+     * Listener related to SeekBarWithHint.OnSeekBarChangeListener
+     */
+    public interface OnSeekBarTrackingStateChangedListener {
         void onStartTrackingTouch();
         void onStopTrackingTouch(int progress);
     }

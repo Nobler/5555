@@ -19,8 +19,10 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.wdjhzw.pocketmode.widget.BlockedView;
+
 /**
- * Created by houzhiwei on 16/5/23.
+ * Main service handling blocked view's behavior.
  */
 public class MainService extends Service {
     public static final String ACTION_SHOW_BLOCKED_VIEW = "com.wdjhzw.pocketmode.SHOW_BLOCKED_VIEW";
@@ -51,28 +53,27 @@ public class MainService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Sensor proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_USER_PRESENT);
 
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
         mReceiver = new SensorEventReceiver(this, sensorManager, proximitySensor);
         registerReceiver(mReceiver, filter);
 
-        mRepeatCount = getResources().getInteger(R.integer.repeat_count);
         mWindowManager = ((WindowManager) getSystemService(Context.WINDOW_SERVICE));
         initBlockedViewLayoutParams();
         inflateBlockedView();
         mIsBlockedViewShown = false;
+        mRepeatCount = getResources().getInteger(R.integer.repeat_count);
 
+        mScreenHeight = Utilities.getScreenHeight(this);
         mBlockedInfoCoordinate = PreferenceManager.getDefaultSharedPreferences(MainService
-                .this).getInt(MainSettingsFragment.KEY_BLOCKED_INFO_POS,
-                SeekBarPreference.DEFAULT_VALUE);
-        mScreenHeight = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay().getHeight();
+                .this).getInt(MainSettingsFragment.KEY_BLOCKED_INFO_COORDINATE, SeekBarPreference
+                .DEFAULT_VALUE);
     }
 
     @Override
@@ -117,6 +118,7 @@ public class MainService extends Service {
                 .TYPE_SYSTEM_ERROR, WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED, PixelFormat
                 .TRANSLUCENT);
 
+        // fade in and fade out animation
         mLayoutParams.windowAnimations = R.style.BlockedView;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -139,7 +141,7 @@ public class MainService extends Service {
             vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    mBlockedInfo.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    Utilities.removeOnGlobalLayoutListener(mBlockedInfo, this);
 
                     // The height of blocked info can noly be got after its layout is initialized.
                     mBlockedInfoHeight = mBlockedInfo.getHeight();
@@ -153,7 +155,7 @@ public class MainService extends Service {
             mBlockedInfo.setVisibility(View.INVISIBLE);
         }
 
-        mProgressBar = (ProgressBar) mBlockedView.findViewById(R.id.progressBar);
+        mProgressBar = (ProgressBar) mBlockedView.findViewById(R.id.progress_bar);
         mBlockedView.setOnKeyStateChangeListener(new BlockedView.OnKeyStateChangeListener() {
             /**
              * <p>
@@ -171,7 +173,7 @@ public class MainService extends Service {
              *     This design is to avoid, when blocked view is gone, one of volume keys may be
              *     still in down state, Lanuncher or Keyguard will dispatch the key event which
              *     will result in sound notifaction showing. It is bad user experience.
-             *     There may exists a more elegant solution
+             *     There may exists a more elegant solution.
              * </p>
              */
             private boolean isBlockedViewTransparent = false;
@@ -184,21 +186,26 @@ public class MainService extends Service {
 
                     if (!isBlockedViewTransparent) {
                         if (repeatCount > mRepeatCount) {
-                            Log.e(TAG, "repeat count");
+                            Log.e(TAG, "reach repeat count");
+
                             isBlockedViewTransparent = true;
                             mBlockedView.setBackgroundResource(android.R.color.transparent);
-                            setTextViewVisibility(View.INVISIBLE);
+                            mBlockedInfo.setVisibility(View.INVISIBLE);
                         }
 
                         return;
+                    } else {
+                        // In that case, blocked view is transparent, but double keys are still
+                        // in down state. ProgressBar should be invisible.
                     }
                 } else if (keyState == BlockedView.KeyState.STATE_DOUBLE_KEY_UP) {
                     if (isBlockedViewTransparent) {
                         Log.e(TAG, "double key up");
+
                         isBlockedViewTransparent = false;
                         hideBlockedView();
                         mBlockedView.setBackgroundResource(R.drawable.bg_blocked_view);
-                        setTextViewVisibility(View.VISIBLE);
+                        mBlockedInfo.setVisibility(View.VISIBLE);
 
                         return;
                     }
@@ -207,15 +214,6 @@ public class MainService extends Service {
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
-    }
-
-    private void setTextViewVisibility(int visibility) {
-        if (!PreferenceManager.getDefaultSharedPreferences(MainService.this).getBoolean
-                (MainSettingsFragment.KEY_SHOW_BLOCKED_INFO, true)) {
-            mBlockedInfo.setVisibility(View.INVISIBLE);
-        } else {
-            mBlockedInfo.setVisibility(visibility);
-        }
     }
 
     private void showBlockedView() {
@@ -232,7 +230,7 @@ public class MainService extends Service {
     }
 
     private void setBlockedInfoCoordinate(int coordinate) {
-        // If the preference of Y coordinate is changed before the blocked info is shown in first
+        // If the preference of Y coordinate is changed before the blocked info shown in first
         // time, the value of mBlockedInfoCoordinate should be updated as well.
         mBlockedInfoCoordinate = coordinate;
 

@@ -1,4 +1,4 @@
-package com.wdjhzw.pocketmode;
+package com.wdjhzw.pocketmode.widget;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -7,8 +7,10 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.animation.AnimationUtils;
 
+import com.wdjhzw.pocketmode.R;
+
 /**
- * Implementation of App Widget functionality.
+ * FloatingActionButton that having check state.
  */
 public class CheckableFab extends FloatingActionButton {
     private boolean mIsChecked;

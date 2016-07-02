@@ -19,13 +19,13 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
     private static final String TAG = "SensorEventReceiver";
 
     private Context mContext;
-    private SensorManager mSM;
+    private SensorManager mSensorManager;
     private Sensor mProximitySensor;
     private boolean mIsBlockedViewShown = false;
 
     public SensorEventReceiver(Context context, SensorManager sm, Sensor s) {
         mContext = context;
-        mSM = sm;
+        mSensorManager = sm;
         mProximitySensor = s;
 
         Log.e(TAG, mProximitySensor.toString());
@@ -41,14 +41,15 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
                 Log.e(TAG, "ACTION_SCREEN_OFF");
                 if (mIsBlockedViewShown) {
                     hideBlockedView();
-                    mSM.unregisterListener(this);
+                    mSensorManager.unregisterListener(this);
                     Log.e(TAG, "Sensor OFF");
                     mIsBlockedViewShown = false;
                 }
                 break;
             case Intent.ACTION_SCREEN_ON:
                 Log.e(TAG, "ACTION_SCREEN_ON");
-                mSM.registerListener(this, mProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+                mSensorManager.registerListener(this, mProximitySensor, SensorManager
+                        .SENSOR_DELAY_NORMAL);
                 Log.e(TAG, "Sensor ON");
 
                 break;
@@ -64,7 +65,7 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
         if (event.values[0] == 0.0f) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays
                     (mContext)) {
-                mSM.unregisterListener(this);
+                mSensorManager.unregisterListener(this);
                 Log.e(TAG, "Sensor OFF");
 
                 Toast.makeText(mContext, "Please give my app this permission!", Toast
@@ -79,7 +80,7 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
                 hideBlockedView();
                 mIsBlockedViewShown = false;
             }
-            mSM.unregisterListener(this);
+            mSensorManager.unregisterListener(this);
             Log.e(TAG, "Sensor OFF");
         }
     }

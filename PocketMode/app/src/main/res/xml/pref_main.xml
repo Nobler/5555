@@ -34,7 +34,7 @@
         <com.wdjhzw.pocketmode.SeekBarPreference
             android:defaultValue="20"
             android:dependency="show_blocked_info"
-            android:key="blocked_info_pos"
+            android:key="blocked_info_coordinate"
             android:layout="@layout/preference_widget_seekbar"
             android:title="@string/blocked_info_pos"/>
 
