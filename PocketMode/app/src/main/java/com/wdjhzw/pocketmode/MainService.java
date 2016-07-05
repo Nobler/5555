@@ -40,9 +40,8 @@ public class MainService extends Service {
     private boolean mIsBlockedViewShown;
     private ProgressBar mProgressBar;
     private TextView mBlockedInfo;
-    private int mBlockedInfoHeight;
     private int mBlockedInfoCoordinate;
-    private int mScreenHeight;
+    private float mBlockedInfoUnitCoordinate;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -70,7 +69,6 @@ public class MainService extends Service {
         mIsBlockedViewShown = false;
         mRepeatCount = getResources().getInteger(R.integer.repeat_count);
 
-        mScreenHeight = Utilities.getScreenHeight(this);
         mBlockedInfoCoordinate = PreferenceManager.getDefaultSharedPreferences(MainService
                 .this).getInt(MainSettingsFragment.KEY_BLOCKED_INFO_COORDINATE, SeekBarPreference
                 .DEFAULT_VALUE);
@@ -144,11 +142,12 @@ public class MainService extends Service {
                     Utilities.removeOnGlobalLayoutListener(mBlockedInfo, this);
 
                     // The height of blocked info can noly be got after its layout is initialized.
-                    mBlockedInfoHeight = mBlockedInfo.getHeight();
+                    int screenHeight = Utilities.getScreenHeight(MainService.this);
+                    mBlockedInfoUnitCoordinate = (screenHeight - mBlockedInfo.getHeight()) / 100.0f;
+
                     // The first time blocked info being shown, its Y coordinate should be set
                     // according to Preference.
-                    mBlockedInfo.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 *
-                            mBlockedInfoCoordinate);
+                    mBlockedInfo.setY(mBlockedInfoUnitCoordinate * mBlockedInfoCoordinate);
                 }
             });
         } else {
@@ -235,7 +234,7 @@ public class MainService extends Service {
         mBlockedInfoCoordinate = coordinate;
 
         if (mBlockedInfo != null) {
-            mBlockedInfo.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 * mBlockedInfoCoordinate);
+            mBlockedInfo.setY(mBlockedInfoUnitCoordinate * mBlockedInfoCoordinate);
         }
     }
 

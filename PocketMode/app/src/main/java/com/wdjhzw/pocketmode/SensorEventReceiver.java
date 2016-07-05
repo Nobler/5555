@@ -68,8 +68,7 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
                 mSensorManager.unregisterListener(this);
                 Log.e(TAG, "Sensor OFF");
 
-                Toast.makeText(mContext, "Please give my app this permission!", Toast
-                        .LENGTH_LONG).show();
+                Toast.makeText(mContext, R.string.permission_hint, Toast.LENGTH_LONG).show();
                 return;
             }
 

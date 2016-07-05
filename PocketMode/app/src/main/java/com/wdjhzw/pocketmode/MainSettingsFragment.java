@@ -38,9 +38,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     private SeekBarPreference mBlockedInfoCoordinatePre;
     private View mBlockedInfoPreview;
     private View mBlockedInfo;
-    private int mBlockedInfoHeight;
-    private int mScreenHeight;
-    private int mBlockedInfoCoordinate;
+    private float mBlockedInfoUnitCoordinate;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -89,8 +87,6 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         }
 
         mBootReceiver = new ComponentName(mContext, MainService.BootReceiver.class);
-
-        mScreenHeight = Utilities.getScreenHeight(mContext);
     }
 
     @Override
@@ -141,9 +137,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                         .EXTRA_IS_BLOCKED_INFO_VISIBLE, (Boolean) newValue));
             }
         } else if (preference == mBlockedInfoCoordinatePre) {
-            mBlockedInfoCoordinate = (int) newValue;
-            mBlockedInfo.setY((mScreenHeight - mBlockedInfoHeight / 2) / 100 *
-                    mBlockedInfoCoordinate);
+            mBlockedInfo.setY(mBlockedInfoUnitCoordinate * (int) newValue);
 
             // Whether service is running or not, don't send request to service to set blocked
             // info's coordinate, while value of SeekBarPreference is still changing, or service
@@ -182,7 +176,9 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             @Override
             public void onGlobalLayout() {
                 Utilities.removeOnGlobalLayoutListener(mBlockedInfo, this);
-                mBlockedInfoHeight = mBlockedInfo.getHeight();
+
+                int screenHeight = Utilities.getScreenHeight(mContext);
+                mBlockedInfoUnitCoordinate = (screenHeight - mBlockedInfo.getHeight()) / 100.0f;
             }
         });
 
@@ -200,7 +196,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         if (mContext.isServiceRunning()) {
             mContext.startService(new Intent(mContext, MainService.class).setAction(MainService
                     .ACTION_SET_BLOCKED_INFO_COORDINATE).putExtra(MainService
-                    .EXTRA_BLOCKED_INFO_COORDINAT, mBlockedInfoCoordinate));
+                    .EXTRA_BLOCKED_INFO_COORDINAT, progress));
         }
     }
 }
