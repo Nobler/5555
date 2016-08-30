@@ -158,6 +158,9 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                 .LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_PHONE, 0, PixelFormat.TRANSLUCENT);
 
+        // fade in and fade out animation
+        layoutParams.windowAnimations = R.style.BlockedView;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             layoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
