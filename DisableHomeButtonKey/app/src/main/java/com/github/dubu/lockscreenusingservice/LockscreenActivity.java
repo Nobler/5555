@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.os.Message;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import com.github.dubu.lockscreensample.R;
 import com.github.dubu.lockscreenusingservice.service.LockscreenViewService;
+
+import java.awt.font.TextAttribute;
 
 /**
  * Created by mugku on 15. 3. 16..
@@ -44,6 +47,7 @@ public class LockscreenActivity extends Activity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        Log.e(TAG, "onCreate");
         sLockscreenActivityContext = this;
         mMainHandler = new SendMassgeHandler();
 
@@ -64,10 +68,17 @@ public class LockscreenActivity extends Activity {
         setLockGuard();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG, "onDestory");
+    }
+
     private class SendMassgeHandler extends android.os.Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            Log.e(TAG, "handleMessage");
             finish();
         }
     }
@@ -86,6 +97,7 @@ public class LockscreenActivity extends Activity {
 
         boolean isSoftkeyEnable = LockscreenUtil.getInstance(sLockscreenActivityContext).isSoftKeyAvail(this);
         SharedPreferencesUtil.setBoolean(Lockscreen.ISSOFTKEY, isSoftkeyEnable);
+        Log.e(TAG, "setLockGuard: isLockEnable:" + isLockEnable + " isSoftkeyEnable:" + isSoftkeyEnable);
         if (!isSoftkeyEnable) {
             mMainHandler.sendEmptyMessage(0);
         } else {

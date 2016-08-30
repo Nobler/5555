@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,11 +26,14 @@ import com.github.dubu.lockscreenusingservice.SharedPreferencesUtil;
 import com.romainpiel.shimmer.Shimmer;
 import com.romainpiel.shimmer.ShimmerTextView;
 
+import java.awt.font.TextAttribute;
+
 
 /**
  * Created by mugku on 15. 5. 20..
  */
 public class LockscreenViewService extends Service {
+    private static String TAG = "LockscreenViewService";
     private final int LOCK_OPEN_OFFSET_VALUE = 50;
     private Context mContext = null;
     private LayoutInflater mInflater = null;
@@ -76,6 +80,7 @@ public class LockscreenViewService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.e(TAG, "onStartCommand");
         mMainHandler = new SendMassgeHandler();
         if (SharedPreferencesUtil.get(Lockscreen.ISLOCK)) {
             if (null != mWindowManager) {
@@ -101,7 +106,7 @@ public class LockscreenViewService extends Service {
 
 
     private void initState() {
-
+        Log.e(TAG, "initState");
         mIsLockEnable = LockscreenUtil.getInstance(mContext).isStandardKeyguardState();
         if (mIsLockEnable) {
             mParams = new WindowManager.LayoutParams(

@@ -3,16 +3,22 @@
 
     <!-- Strings related to Settings -->
     <string name="permissions">权限</string>
-    <string name="can_draw_overlays">Enable admin</string>
 
-    <string name="start_service">Start service</string>
+    <string name="start_service">启动服务</string>
 
-    <string name="auto_start">Auto-start</string>
     <string name="about">About</string>
-    <string name="general">General</string>
-    <string name="can_draw_overlays_summary">\"Screen lock\" Action requires Device Admin privileges in order to work</string>
+    <string name="general">常规</string>
+    <string name="can_draw_overlays_summary">在Android 6.0中，需要开启该权限来截获触屏操作</string>
 
-    <string name="toast_service_start">Service start</string>
-    <string name="toast_service_stop">Service stop</string>
-    <string name="toast_occur_error">Operation failed</string>
+    <string name="toast_service_start">服务启动</string>
+    <string name="toast_occur_error">操作失败</string>
+    <string name="blocked_view_info">请勿遮挡屏幕顶部或\n同时长按 音量 + 和 音量 -</string>
+    <string name="start_at_boot">开机启动</string>
+    <string name="can_draw_overlays">允许在其他应用的上层显示</string>
+    <string name="toast_service_stop">服务停止</string>
+    <string name="permission_hint">请打开相应的权限</string>
+    <string name="jump_to">去设置</string>
+    <string name="show_blocked_info">显示屏蔽信息</string>
+    <string name="blocked_info_pos">屏蔽信息位置</string>
+    <string name="positive">确定</string>
 </resources>

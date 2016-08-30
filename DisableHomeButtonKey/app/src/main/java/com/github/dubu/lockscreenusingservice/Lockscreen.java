@@ -2,14 +2,18 @@ package com.github.dubu.lockscreenusingservice;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.github.dubu.lockscreenusingservice.service.LockscreenService;
 import com.github.dubu.lockscreenusingservice.service.LockscreenViewService;
+
+import java.awt.font.TextAttribute;
 
 /**
  * Created by mugku on 15. 5. 20..
  */
 public class Lockscreen {
+    private static final String TAG = "LockScreen";
     private Context mContext = null;
     public static final String ISSOFTKEY = "ISSOFTKEY";
     public static final String ISLOCK = "ISLOCK";
@@ -35,13 +39,15 @@ public class Lockscreen {
     }
 
     public void startLockscreenService() {
+        Log.e(TAG, "startLockscreenService");
         SharedPreferencesUtil.init(mContext);
         Intent startLockscreenIntent =  new Intent(mContext, LockscreenService.class);
 //        startLockscreenIntent.putExtra(LockscreenService.LOCKSCREENSERVICE_FIRST_START, true);
         mContext.startService(startLockscreenIntent);
-
     }
     public void stopLockscreenService() {
+        Log.e(TAG, "stopLockscreenService");
+
         Intent stopLockscreenViewIntent =  new Intent(mContext, LockscreenViewService.class);
         mContext.stopService(stopLockscreenViewIntent);
         Intent stopLockscreenIntent =  new Intent(mContext, LockscreenService.class);

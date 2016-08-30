@@ -13,19 +13,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * Created by houzhiwei on 16/5/23.
+ * Handle ProximitySensor value changed events.
  */
 public class SensorEventReceiver extends BroadcastReceiver implements SensorEventListener {
     private static final String TAG = "SensorEventReceiver";
 
     private Context mContext;
-    private SensorManager mSM;
+    private SensorManager mSensorManager;
     private Sensor mProximitySensor;
-    private boolean mIsBlockedActivityInBack = true;
+    private boolean mIsBlockedViewShown = false;
 
     public SensorEventReceiver(Context context, SensorManager sm, Sensor s) {
         mContext = context;
-        mSM = sm;
+        mSensorManager = sm;
         mProximitySensor = s;
 
         Log.e(TAG, mProximitySensor.toString());
@@ -36,22 +36,20 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
         switch (intent.getAction()) {
             case Intent.ACTION_USER_PRESENT:
                 Log.e(TAG, "ACTION_USER_PRESENT");
-                mSM.unregisterListener(this);
 
-                break;
             case Intent.ACTION_SCREEN_OFF:
                 Log.e(TAG, "ACTION_SCREEN_OFF");
-                if (!mIsBlockedActivityInBack) {
-                    hideBlockedActivity();
-                    Log.e(TAG, "hide activity");
-                    mSM.unregisterListener(this);
+                if (mIsBlockedViewShown) {
+                    hideBlockedView();
+                    mSensorManager.unregisterListener(this);
                     Log.e(TAG, "Sensor OFF");
-                    mIsBlockedActivityInBack = true;
+                    mIsBlockedViewShown = false;
                 }
                 break;
             case Intent.ACTION_SCREEN_ON:
                 Log.e(TAG, "ACTION_SCREEN_ON");
-                mSM.registerListener(this, mProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+                mSensorManager.registerListener(this, mProximitySensor, SensorManager
+                        .SENSOR_DELAY_NORMAL);
                 Log.e(TAG, "Sensor ON");
 
                 break;
@@ -67,34 +65,35 @@ public class SensorEventReceiver extends BroadcastReceiver implements SensorEven
         if (event.values[0] == 0.0f) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays
                     (mContext)) {
-                mSM.unregisterListener(this);
+                mSensorManager.unregisterListener(this);
                 Log.e(TAG, "Sensor OFF");
 
-                Toast.makeText(mContext, "Please give my app this permission!", Toast
-                        .LENGTH_SHORT).show();
+                Toast.makeText(mContext, R.string.permission_hint, Toast.LENGTH_LONG).show();
                 return;
             }
 
-            Log.e(TAG, "show activity");
-            mContext.startActivity(new Intent().setClass(mContext, BlockedActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            mIsBlockedActivityInBack = false;
+            showBlockedView();
+            mIsBlockedViewShown = true;
         } else {
-            if (!mIsBlockedActivityInBack) {
-                hideBlockedActivity();
-                Log.e(TAG, "hide activity");
-                mIsBlockedActivityInBack = true;
+            if (mIsBlockedViewShown) {
+                hideBlockedView();
+                mIsBlockedViewShown = false;
             }
-            mSM.unregisterListener(this);
+            mSensorManager.unregisterListener(this);
             Log.e(TAG, "Sensor OFF");
         }
     }
 
-    private void hideBlockedActivity() {
-        BlockedActivity activity = BlockedActivity.getInstance();
-        if (activity != null) {
-            activity.moveTaskToBack(false);
-        }
+    private void showBlockedView() {
+        Log.e(TAG, "showBlockedView");
+        mContext.startService(new Intent(MainService.ACTION_SHOW_BLOCKED_VIEW).setClass(mContext,
+                MainService.class));
+    }
+
+    private void hideBlockedView() {
+        Log.e(TAG, "hideBlockedView");
+        mContext.startService(new Intent(MainService.ACTION_HIDE_BLOCKED_VIEW).setClass(mContext,
+                MainService.class));
     }
 
     @Override
