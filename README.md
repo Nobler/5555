@@ -13,6 +13,7 @@ There are four project folders :
  - Start at boot.
  - Blocked view's visibility and blocked info's Y coordinate customization.
  - Main service running state indication
+ - Press and hold Volume + and Volume - simultaneously to dismiss blocked view.
 
 Android 5.0
 
