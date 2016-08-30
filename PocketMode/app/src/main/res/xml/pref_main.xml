@@ -4,9 +4,6 @@
         android:key="permission"
         android:layout="@layout/preference_category"
         android:title="@string/permissions">
-        <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
-         dismiss it. -->
-        <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
         <SwitchPreference
             android:defaultValue="false"
             android:key="can_draw_overlays"
@@ -18,9 +15,8 @@
         android:key="general"
         android:layout="@layout/preference_category"
         android:title="@string/general">
-        <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="start_at_boot"
             android:layout="@layout/preference_widget_switch"
             android:title="@string/start_at_boot"/>

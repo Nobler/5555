@@ -83,6 +83,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             mDrawOverlaysPre = (SwitchPreference) findPreference(KEY_CAN_DRAW_OVERLAYS);
             mDrawOverlaysPre.setOnPreferenceChangeListener(this);
 
+            //set dependency dynamically in code
             findPreference("general").setDependency(KEY_CAN_DRAW_OVERLAYS);
         }
 
@@ -99,17 +100,15 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
             if (!mCanDrawOverlays) {
                 mContext.setFabEnabled(false);
-
                 // auto-start should be disabled too
-                if (mBootStartPre.isChecked()) {
-                    setPreference(mBootStartPre, false);
-                }
+                onPreferenceChange(mBootStartPre, false);
 
                 return;
             }
         }
 
         mContext.setFabEnabled(true);
+        onPreferenceChange(mBootStartPre, true);
     }
 
     @SuppressWarnings("all")
@@ -140,19 +139,17 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             mBlockedInfo.setY(mBlockedInfoUnitCoordinate * (int) newValue);
 
             // Whether service is running or not, don't send request to service to set blocked
-            // info's coordinate, while value of SeekBarPreference is still changing, or service
+            // info's coordinate during value of SeekBarPreference still changing, or service
             // will be started unintentionally.
         }
 
         return true;
     }
 
-    private void setPreference(SwitchPreference preference, boolean newValue) {
-        onPreferenceChange(preference, newValue);
-        // onPreferenceChanage() is manually called, the check state should be also set manually.
-        preference.setChecked(newValue);
-    }
-
+    /**
+     * Show blocked info preview after seekbar start tracking, it's helpful for user to know
+     * the actual coordinate of blocked info.
+     */
     @Override
     public void onStartTrackingTouch() {
         Log.e(TAG, "onStartTrackingTouch");
@@ -171,6 +168,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                 .LAYOUT_INFLATER_SERVICE)).inflate(R.layout.blocked_info_preview, null);
         mBlockedInfo = mBlockedInfoPreview.findViewById(R.id.blocked_info);
 
+        // the height of blocked info can noly be got after its showing
         ViewTreeObserver vto = mBlockedInfo.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
