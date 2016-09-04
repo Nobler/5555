@@ -21,4 +21,7 @@
     <string name="show_blocked_info">Show blocked info</string>
     <string name="blocked_info_pos">Blocked info position</string>
     <string name="positive">OK</string>
+    <string name="about">About</string>
+    <string name="project_github_url">https://github.com/Nobler/PocketMode</string>
+
 </resources>

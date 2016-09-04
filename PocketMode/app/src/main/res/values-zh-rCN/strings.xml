@@ -6,7 +6,7 @@
 
     <string name="start_service">启动服务</string>
 
-    <string name="about">About</string>
+    <string name="about">关于</string>
     <string name="general">常规</string>
     <string name="can_draw_overlays_summary">在Android 6.0中，需要开启该权限来截获触屏操作</string>
 

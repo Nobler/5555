@@ -111,6 +111,13 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         onPreferenceChange(mBootStartPre, true);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.e(TAG, "onDestory");
+    }
+
     @SuppressWarnings("all")
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
