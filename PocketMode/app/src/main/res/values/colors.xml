@@ -5,6 +5,6 @@
     <color name="colorAccent">#F44336</color>
 
     <color name="colorBlockedInfo">#80F44336</color>
-    <color name="colorBlockedView">#B71C1C</color>
-    <color name="colorProgressBar">#FF0000</color>
+    <color name="colorBlockedView">#80FF0000</color>
+    <color name="colorProgressBar">#F44336</color>
 </resources>
