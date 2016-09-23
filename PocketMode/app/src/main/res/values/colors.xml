@@ -6,5 +6,5 @@
 
     <color name="colorBlockedInfo">#80F44336</color>
     <color name="colorBlockedView">#80FF0000</color>
-    <color name="colorProgressBar">#F44336</color>
+    <color name="colorProgressBar">#FF0000</color>
 </resources>
