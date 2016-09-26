@@ -1,9 +1,11 @@
 package com.wdjhzw.pocketmode;
 
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -16,6 +18,13 @@ public class AboutActivity extends AppCompatActivity {
         if (actionBar != null) {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        try {
+            TextView versionName = (TextView) findViewById(R.id.version_name);
+            versionName.append(" " + getPackageManager().getPackageInfo("com.wdjhzw.pocketmode", PackageManager.GET_META_DATA).versionName);
+        } catch (Exception e) {
+
         }
     }
 
