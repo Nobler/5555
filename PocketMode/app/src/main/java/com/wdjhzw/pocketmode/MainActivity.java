@@ -2,8 +2,6 @@ package com.wdjhzw.pocketmode;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +12,6 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -102,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.e(TAG, "onDestory");
+        Utilities.log(TAG, "onDestory");
     }
 
     public void setFabEnabled(boolean enabled) {
@@ -132,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             String service = runningServices.get(i).service.getClassName();
 
             if (service.equals(serviceName)) {
-                Log.e(TAG, serviceName + " is running");
+                Utilities.log(TAG, serviceName + " is running");
                 return true;
             }
         }

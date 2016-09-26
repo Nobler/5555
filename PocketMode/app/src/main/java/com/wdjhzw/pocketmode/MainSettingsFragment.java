@@ -15,7 +15,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -115,13 +114,13 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     public void onDestroy() {
         super.onDestroy();
 
-        Log.e(TAG, "onDestory");
+        Utilities.log(TAG, "onDestory");
     }
 
     @SuppressWarnings("all")
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        Log.e(TAG, "onPreferenceChange:" + preference.toString() + ":" + newValue.toString());
+        Utilities.log(TAG, "onPreferenceChange:" + preference.toString() + ":" + newValue.toString());
 
         if (preference == mDrawOverlaysPre) {
             if ((Boolean) newValue != mCanDrawOverlays) {
@@ -159,7 +158,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
      */
     @Override
     public void onStartTrackingTouch() {
-        Log.e(TAG, "onStartTrackingTouch");
+        Utilities.log(TAG, "onStartTrackingTouch");
 
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager
                 .LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
@@ -195,7 +194,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
     @Override
     public void onStopTrackingTouch(int progress) {
-        Log.e(TAG, "onStopTrackingTouch");
+        Utilities.log(TAG, "onStopTrackingTouch");
 
         mContext.getWindowManager().removeView(mBlockedInfoPreview);
 

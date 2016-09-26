@@ -11,7 +11,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -76,7 +75,7 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand:");
+        Utilities.log(TAG, "onStartCommand:");
 
         if (intent != null && intent.getAction() != null) {
             String action = intent.getAction();
@@ -185,7 +184,7 @@ public class MainService extends Service {
 
                     if (!isBlockedViewTransparent) {
                         if (repeatCount > mRepeatCount) {
-                            Log.e(TAG, "reach repeat count");
+                            Utilities.log(TAG, "reach repeat count");
 
                             isBlockedViewTransparent = true;
                             mBlockedView.setBackgroundResource(android.R.color.transparent);
@@ -199,7 +198,7 @@ public class MainService extends Service {
                     }
                 } else if (keyState == BlockedView.KeyState.STATE_DOUBLE_KEY_UP) {
                     if (isBlockedViewTransparent) {
-                        Log.e(TAG, "double key up");
+                        Utilities.log(TAG, "double key up");
 
                         isBlockedViewTransparent = false;
                         hideBlockedView();
@@ -252,7 +251,7 @@ public class MainService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             context.startService(new Intent(context, MainService.class));
-            Log.e("BootReceiver", "boot");
+            Utilities.log("BootReceiver", "boot");
         }
     }
 }

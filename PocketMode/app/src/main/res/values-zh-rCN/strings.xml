@@ -8,7 +8,7 @@
 
     <string name="about">关于</string>
     <string name="general">常规</string>
-    <string name="can_draw_overlays_summary">在Android 6.0中，需要开启该权限来截获触屏操作</string>
+    <string name="can_draw_overlays_summary">在Android 6.0之后，需要开启该权限来截获触屏操作</string>
 
     <string name="toast_service_start">服务启动</string>
     <string name="toast_occur_error">操作失败</string>

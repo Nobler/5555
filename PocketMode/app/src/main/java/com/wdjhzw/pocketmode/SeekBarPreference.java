@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.Preference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.wdjhzw.pocketmode.widget.SeekBarWithHint;
@@ -33,7 +32,7 @@ public class SeekBarPreference extends Preference {
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        Log.e(TAG, "onSetInitialValue:" + restorePersistedValue + ":" + defaultValue);
+        Utilities.log(TAG, "onSetInitialValue:" + restorePersistedValue + ":" + defaultValue);
         if (restorePersistedValue) {
             // Restore existing state
             mCurrentValue = this.getPersistedInt(DEFAULT_VALUE);
@@ -52,7 +51,7 @@ public class SeekBarPreference extends Preference {
     @Override
     protected void onBindView(View view) {
         super.onBindView(view);
-        Log.e(TAG, "onBindView");
+        Utilities.log(TAG, "onBindView");
 
         final SeekBarWithHint seekBar = (SeekBarWithHint) view.findViewById(R.id
                 .seek_bar_with_hint);

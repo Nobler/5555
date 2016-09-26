@@ -2,9 +2,10 @@ package com.wdjhzw.pocketmode.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.RelativeLayout;
+
+import com.wdjhzw.pocketmode.Utilities;
 
 /**
  * View to block all touch events.
@@ -33,7 +34,7 @@ public class BlockedView extends RelativeLayout {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Log.e(TAG, "key:" + event.getKeyCode() + ", action:" + event.getAction() + ", repeat " +
+        Utilities.log(TAG, "key:" + event.getKeyCode() + ", action:" + event.getAction() + ", repeat " +
                 "count:" + event.getRepeatCount());
 
         int keyCode = event.getKeyCode();
@@ -49,7 +50,7 @@ public class BlockedView extends RelativeLayout {
         }
 
         if (mIsVolumeDownKeyDown && mIsVolumeUpKeyDown) {
-            Log.e(TAG, "double volume key down");
+            Utilities.log(TAG, "double volume key down");
             //noinspection StatementWithEmptyBody
             if (mLastRepeatCount == 0 && repeatCount == 0 && keyCode != mLastKeyCode) {
                 mKeyState = KeyState.STATE_DOUBLE_KEY_DOWN_SIMULTANEOUSLY;
@@ -63,7 +64,7 @@ public class BlockedView extends RelativeLayout {
             mKeyState = KeyState.STATE_OTHERS;
         }
 
-        Log.e(TAG, "key state:" + mKeyState);
+        Utilities.log(TAG, "key state:" + mKeyState);
         mListener.onKeyStateChange(mKeyState, repeatCount);
 
         mLastRepeatCount = repeatCount;

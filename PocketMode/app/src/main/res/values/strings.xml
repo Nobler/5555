@@ -10,7 +10,7 @@
     <string name="start_at_boot">Start at boot</string>
     <string name="general">General</string>
 
-    <string name="can_draw_overlays_summary">In Android 6.0, you need to enable this permission to intercept screen touch event</string>
+    <string name="can_draw_overlays_summary">After Android 6.0, you need to enable this permission to intercept screen touch event</string>
 
     <string name="toast_service_stop">Service stop</string>
     <string name="toast_occur_error">Operation failed</string>
@@ -22,6 +22,6 @@
     <string name="blocked_info_pos">Blocked info position</string>
     <string name="positive">OK</string>
     <string name="about">About</string>
-    <string name="project_github_url">https://github.com/Nobler/PocketMode</string>
+    <string name="project_github_url" translatable="false">https://github.com/Nobler/PocketMode</string>
 
 </resources>

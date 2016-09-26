@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
@@ -48,5 +49,11 @@ public class Utilities {
             }
         }
         return mScreenHeight;
+    }
+
+    public static void log(String tag, String msg) {
+        if (BuildConfig.DEBUG) {
+            Log.e(tag, msg);
+        }
     }
 }
